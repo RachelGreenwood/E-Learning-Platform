@@ -54,6 +54,25 @@ function verifyJwt(req, res, next) {
   );
 }
 
+// See if user profile already exists
+app.get("/api/profile", verifyJwt, async (req, res) => {
+  const auth0_id = req.user.sub;
+
+  try {
+    const result = await pool.query(
+      `SELECT * FROM profiles WHERE auth0_id = $1`,
+      [auth0_id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ exists: false });
+    }
+    res.json({ exists: true, profile: result.rows[0] });
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 // Routes
 app.post("/api/profile", verifyJwt, async (req, res) => {
   const { email, username, discipline, role } = req.body;
