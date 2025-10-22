@@ -6,6 +6,7 @@ export default function ProfileSetup() {
   const { user, getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
   const [role, setRole] = useState("Student");
   const [discipline, setDiscipline] = useState("MMA");
+  const [username, setUsername] = useState("");
   const navigate = useNavigate();
  
   const handleSubmit = async (e) => {
@@ -39,7 +40,7 @@ try {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-            username: user.name,
+            username: username,
             email: user.email,
             discipline: discipline,
             role: role,
@@ -58,6 +59,10 @@ try {
 
   return (
      <form onSubmit={handleSubmit}>
+        <label>
+        Enter your username:
+        <input type="text" name="username" id="username" value={username} onChange={(e) => setUsername(e.target.value)}></input>
+      </label>
       <label>
         Choose your role:
         <select value={role} onChange={(e) => setRole(e.target.value)}>
