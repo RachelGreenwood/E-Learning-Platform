@@ -92,6 +92,17 @@ app.post("/api/profile", verifyJwt, async (req, res) => {
   }
 });
 
+// Get the data of all users in the profiles table
+app.get("/api/profiles", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM profiles ORDER BY id ASC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 // Update user profile (PUT replaces the entire record)
 app.put("/api/profile", verifyJwt, async (req, res) => {
   const { email, username, discipline } = req.body;
