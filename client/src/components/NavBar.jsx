@@ -8,6 +8,7 @@ export default function NavBar() {
                 <ul>
                     <li><AuthenticationButton /></li>
                     <li><Link className='link' to="/profile"><div>Profile</div></Link></li>
+                    <li><Link className='link' to="/user-search">See All Users</Link></li>
                 </ul>
             </nav>
         </div>
