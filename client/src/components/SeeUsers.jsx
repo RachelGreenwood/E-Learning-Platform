@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function SeeUsers() {
   const [users, setUsers] = useState([]);
+  const [selectedRole, setSelectedRole] = useState("All");
 
   useEffect(() => {
     async function fetchUsers() {
@@ -17,6 +18,11 @@ export default function SeeUsers() {
     fetchUsers();
   }, []);
 
+   const filteredUsers =
+    selectedRole === "All"
+      ? users
+      : users.filter((user) => user.role === selectedRole);
+
   return (
     <div>
       <h1>See All Users</h1>
@@ -24,10 +30,10 @@ export default function SeeUsers() {
       <div>
         <div>
           <label>Instructor or Student: </label>
-          <select>
-            <option value="instructor">Instructor</option>
-            <option value="student">Student</option>
-            <option value="all">All</option>
+          <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+            <option value="All">All</option>
+            <option value="Student">Student</option>
+            <option value="Instructor">Instructor</option>
           </select>
         </div>
       </div>
@@ -41,7 +47,7 @@ export default function SeeUsers() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <tr key={user.id}>
               <td>{user.username}</td>
               <td>{user.email}</td>
