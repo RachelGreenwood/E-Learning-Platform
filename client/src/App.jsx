@@ -6,6 +6,7 @@ import HomePage from "./components/HomePage.jsx";
 import ProfileSetup from "./components/ProfileSetup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import Profile from "./components/Profile.jsx";
+import NavBar from "./components/NavBar.jsx";
 
 function App() {
   const { loginWithRedirect, logout, user, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -40,6 +41,7 @@ function App() {
 
   return (
     <div>
+      <NavBar />
       {/* If user isn't logged in, show Log In button. If user is logged in, show Log Out button and personalized welcome */}
       {!isAuthenticated ? (
         <button onClick={() => loginWithRedirect()}>Log In</button>
