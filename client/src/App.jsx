@@ -6,6 +6,7 @@ import ProfileSetup from "./components/ProfileSetup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import Profile from "./components/Profile.jsx";
 import NavBar from "./components/NavBar.jsx";
+import SeeUsers from "./components/SeeUsers.jsx";
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
       <Route path="/profile-setup" element={<ProfileSetup />} />
       <Route path="/dashboard" element={<Dashboard />} />  
       <Route path="/profile" element={<Profile />} /> 
+      <Route path="/user-search" element={<SeeUsers />} />
     </Routes>
     </div>
   );
