@@ -27,6 +27,7 @@ export default function SeeUsers() {
           <select>
             <option value="instructor">Instructor</option>
             <option value="student">Student</option>
+            <option value="all">All</option>
           </select>
         </div>
       </div>
