@@ -3,7 +3,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, logout } = useAuth0();
+
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -94,47 +95,81 @@ export default function Profile() {
 
   if (loading) return <p>Loading profile...</p>;
 
+  const handleDelete = async () => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete your profile? This action cannot be undone."
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const token = await getAccessTokenSilently();
+
+    const res = await fetch("http://localhost:5000/api/profile", {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.error || "Failed to delete profile");
+    }
+
+    alert("Your profile has been deleted.");
+    logout({ returnTo: window.location.origin });
+  } catch (error) {
+    console.error("Error deleting profile:", error);
+    alert("Error deleting profile.");
+  }
+};
+
+
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Edit Your Profile</h2>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <h2>Edit Your Profile</h2>
 
-      <label>
-        Username:
-        <input
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-        />
-      </label>
+        <label>
+          Username:
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+        </label>
 
-      <label>
-        Email:
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-      </label>
+        <label>
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </label>
 
-      <label>
-        Choose your discipline(s):
-        <select
-          multiple
-          value={formData.discipline}
-          onChange={handleDisciplineChange}
-        >
-          <option value="MMA">MMA</option>
-          <option value="Taekwondo">Taekwondo</option>
-          <option value="Aikido">Aikido</option>
-          <option value="Muay Thai">Muay Thai</option>
-        </select>
-      </label>
+        <label>
+          Choose your discipline(s):
+          <select
+            multiple
+            value={formData.discipline}
+            onChange={handleDisciplineChange}
+          >
+            <option value="MMA">MMA</option>
+            <option value="Taekwondo">Taekwondo</option>
+            <option value="Aikido">Aikido</option>
+            <option value="Muay Thai">Muay Thai</option>
+          </select>
+        </label>
 
-      <button type="submit">Save Changes</button>
+        <button type="submit">Save Changes</button>
 
-      {message && <p>{message}</p>}
-    </form>
+        {message && <p>{message}</p>}
+      </form>
+      <button type="button" onClick={handleDelete}>Delete Profile</button>
+    </div>
   );
 }

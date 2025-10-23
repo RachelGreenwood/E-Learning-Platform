@@ -1,8 +1,10 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthenticationButton() {
     const { loginWithRedirect, logout, user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+    const navigate = useNavigate();
 
       // If user already has a profile, go to Dashboard page. If not, go to Profile Setup page
   useEffect(() => {

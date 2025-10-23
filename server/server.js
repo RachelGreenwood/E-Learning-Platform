@@ -122,6 +122,28 @@ app.put("/api/profile", verifyJwt, async (req, res) => {
   }
 });
 
+// Deletes a user
+app.delete("/api/profile", verifyJwt, async (req, res) => {
+  try {
+    const auth0Id = req.user.sub;
+
+    const result = await pool.query(
+      "DELETE FROM profiles WHERE auth0_id = $1 RETURNING *",
+      [auth0Id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
+
+    res.json({ message: "Profile deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting profile:", error);
+    res.status(500).json({ error: "Server error deleting profile" });
+  }
+});
+
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
