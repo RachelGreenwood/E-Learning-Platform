@@ -20,6 +20,16 @@ export default function SeeUsers() {
   return (
     <div>
       <h1>See All Users</h1>
+      <p>Search/Filter Users</p>
+      <div>
+        <div>
+          <label>Instructor or Student: </label>
+          <select>
+            <option value="instructor">Instructor</option>
+            <option value="student">Student</option>
+          </select>
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
