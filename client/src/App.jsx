@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage.jsx";
 import ProfileSetup from "./components/ProfileSetup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
+import Profile from "./components/Profile.jsx";
 
 function App() {
   const { loginWithRedirect, logout, user, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -52,7 +53,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
       <Route path="/profile-setup" element={<ProfileSetup />} />
-      <Route path="/dashboard" element={<Dashboard />} />    
+      <Route path="/dashboard" element={<Dashboard />} />  
+      <Route path="/profile" element={<Profile />} /> 
     </Routes>
     </div>
   );

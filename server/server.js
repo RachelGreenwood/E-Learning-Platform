@@ -92,6 +92,36 @@ app.post("/api/profile", verifyJwt, async (req, res) => {
   }
 });
 
+// Update user profile (PUT replaces the entire record)
+app.put("/api/profile", verifyJwt, async (req, res) => {
+  const { email, username, discipline } = req.body;
+  const auth0_id = req.user.sub;
+
+  try {
+    // Only update fields that can be changed
+    const result = await pool.query(
+      `UPDATE profiles
+       SET email = $1, username = $2, discipline = $3
+       WHERE auth0_id = $4
+       RETURNING *`,
+      [email, username, discipline, auth0_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Database error:", err);
+    if (err.code === "23505") {
+      res.status(400).json({ error: "Email or username already taken" });
+    } else {
+      res.status(500).json({ error: "Database error" });
+    }
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
