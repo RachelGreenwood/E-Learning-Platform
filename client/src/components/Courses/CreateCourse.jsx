@@ -11,6 +11,12 @@ export default function CreateCourse() {
                     <label>Credits: </label>
                     <input type="number" />
                 </div>
+                <div>
+                    <label>Prerequisites: </label>
+                    <select>
+                        <option>Test Option</option>
+                    </select>
+                </div>
                 <button type="submit">Create Course</button>
             </form>
         </div>
