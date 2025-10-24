@@ -8,6 +8,7 @@ import Profile from "./components/Profile/Profile.jsx";
 import NavBar from "./components/NavBar.jsx";
 import SeeUsers from "./components/UserSearch/SeeUsers.jsx";
 import CreateCourse from "./components/Courses/CreateCourse.jsx";
+import CoursesList from "./components/Courses/CoursesList.jsx";
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
       <Route path="/profile" element={<Profile />} /> 
       <Route path="/user-search" element={<SeeUsers />} />
       <Route path="/create-course" element={<CreateCourse />} />
+      <Route path="/course-list" element={<CoursesList />} />
     </Routes>
     </div>
   );
