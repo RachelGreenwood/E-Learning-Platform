@@ -7,6 +7,7 @@ import Dashboard from "./components/Dashboard.jsx";
 import Profile from "./components/Profile/Profile.jsx";
 import NavBar from "./components/NavBar.jsx";
 import SeeUsers from "./components/UserSearch/SeeUsers.jsx";
+import CreateCourse from "./components/Courses/CreateCourse.jsx";
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />} />  
       <Route path="/profile" element={<Profile />} /> 
       <Route path="/user-search" element={<SeeUsers />} />
+      <Route path="/create-course" element={<CreateCourse />} />
     </Routes>
     </div>
   );
