@@ -22,9 +22,7 @@ export default function SeeUsers() {
   const filteredUsers = users.filter((user) => {
     const matchesRole =
       selectedRole === "All" ? true : user.role === selectedRole;
-    const matchesSearch = user.username
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    const matchesSearch = user.username.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase());;
     return matchesRole && matchesSearch;
   });
 
@@ -34,7 +32,7 @@ export default function SeeUsers() {
       <p>Search/Filter Users</p>
       <div>
         <div>
-          <label>Search by Username: </label>
+          <label>Search by Username or Email: </label>
           <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         </div>
         <div>
