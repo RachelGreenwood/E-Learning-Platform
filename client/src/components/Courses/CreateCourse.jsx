@@ -7,6 +7,10 @@ export default function CreateCourse() {
                     <label>Course Name: </label>
                     <input type="text" />
                 </div>
+                <div>
+                    <label>Credits: </label>
+                    <input type="number" />
+                </div>
                 <button type="submit">Create Course</button>
             </form>
         </div>
