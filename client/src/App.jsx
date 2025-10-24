@@ -2,11 +2,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage.jsx";
-import ProfileSetup from "./components/ProfileSetup.jsx";
+import ProfileSetup from "./components/Profile/ProfileSetup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
-import Profile from "./components/Profile.jsx";
+import Profile from "./components/Profile/Profile.jsx";
 import NavBar from "./components/NavBar.jsx";
-import SeeUsers from "./components/SeeUsers.jsx";
+import SeeUsers from "./components/UserSearch/SeeUsers.jsx";
 
 function App() {
 
