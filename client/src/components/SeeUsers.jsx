@@ -4,6 +4,7 @@ export default function SeeUsers() {
   const [users, setUsers] = useState([]);
   const [selectedRole, setSelectedRole] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDiscipline, setSelectedDiscipline] = useState("Any");
 
   useEffect(() => {
     async function fetchUsers() {
@@ -20,10 +21,10 @@ export default function SeeUsers() {
   }, []);
 
   const filteredUsers = users.filter((user) => {
-    const matchesRole =
-      selectedRole === "All" ? true : user.role === selectedRole;
+    const matchesRole = selectedRole === "All" ? true : user.role === selectedRole;
+    const matchesDiscipline = selectedDiscipline === "Any" ? true : user.discipline === selectedDiscipline;
     const matchesSearch = user.username.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase());;
-    return matchesRole && matchesSearch;
+    return matchesRole && matchesDiscipline && matchesSearch;
   });
 
   return (
@@ -41,6 +42,16 @@ export default function SeeUsers() {
             <option value="All">All</option>
             <option value="Student">Student</option>
             <option value="Instructor">Instructor</option>
+          </select>
+        </div>
+        <div>
+          <label>Discipline: </label>
+          <select value={selectedRole} onChange={(e) => setSelectedDiscipline(e.target.value)}>
+            <option value="Any">Any</option>
+            <option value="MMA">MMA</option>
+            <option value="Taekwondo">Taekwondo</option>
+            <option value="Aikido">Aikido</option>
+            <option value="Muay Thai">Muay Thai</option>
           </select>
         </div>
       </div>
