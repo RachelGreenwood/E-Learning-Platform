@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export default function SeeUsers() {
   const [users, setUsers] = useState([]);
   const [selectedRole, setSelectedRole] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function fetchUsers() {
@@ -18,16 +19,24 @@ export default function SeeUsers() {
     fetchUsers();
   }, []);
 
-   const filteredUsers =
-    selectedRole === "All"
-      ? users
-      : users.filter((user) => user.role === selectedRole);
+  const filteredUsers = users.filter((user) => {
+    const matchesRole =
+      selectedRole === "All" ? true : user.role === selectedRole;
+    const matchesSearch = user.username
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    return matchesRole && matchesSearch;
+  });
 
   return (
     <div>
       <h1>See All Users</h1>
       <p>Search/Filter Users</p>
       <div>
+        <div>
+          <label>Search by Username: </label>
+          <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        </div>
         <div>
           <label>Instructor or Student: </label>
           <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
