@@ -17,6 +17,10 @@ export default function CreateCourse() {
                         <option>Test Option</option>
                     </select>
                 </div>
+                <div>
+                    <label>Maximum Number of Students Allowed: </label>
+                    <input type="number" />
+                </div>
                 <button type="submit">Create Course</button>
             </form>
         </div>
