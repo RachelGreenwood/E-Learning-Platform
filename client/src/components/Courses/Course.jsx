@@ -30,9 +30,9 @@ export default function Course() {
     return (
         <div>
             <h1>{course.name}</h1>
-            <p>{course.credits}</p>
-            <p>{course.prereqs}</p>
-            <p>{course.students_allowed}</p>
+            <p>Credits: {course.credits}</p>
+            <p>Prerequisites: {course.prereqs}</p>
+            <p>Max. Number of Students Allowed: {course.students_allowed}</p>
         </div>
     )
 }
