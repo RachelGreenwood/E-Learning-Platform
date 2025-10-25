@@ -31,6 +31,7 @@ export default function Course() {
         <div>
             <h1>{course.name}</h1>
             <p>{course.credits}</p>
+            <p>{course.students_allowed}</p>
         </div>
     )
 }
