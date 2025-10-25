@@ -66,7 +66,7 @@ app.get("/api/profile", verifyJwt, async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ exists: false });
     }
-    res.json({ exists: true, profile: result.rows[0] });
+    res.json(result.rows[0]);
   } catch (err) {
     console.error("Database error:", err);
     res.status(500).json({ error: "Database error" });

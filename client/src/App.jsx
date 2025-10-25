@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage.jsx";
 import ProfileSetup from "./components/Profile/ProfileSetup.jsx";
@@ -13,12 +13,36 @@ import Course from "./components/Courses/Course.jsx";
 
 function App() {
 
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!isAuthenticated || !user) return;
+
+      try {
+        const token = await getAccessTokenSilently();
+        const response = await fetch(`http://localhost:5000/api/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        setProfile(data);
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+
+    fetchProfile();
+  }, [isAuthenticated, user, getAccessTokenSilently]);
+
   return (
     <div>
-      <NavBar />
+      <NavBar profile={profile} />
       <Routes>
         <Route path="/" element={<HomePage />} />
-      <Route path="/profile-setup" element={<ProfileSetup />} />
+      <Route path="/profile-setup" element={<ProfileSetup setProfile={setProfile} />} />
       <Route path="/dashboard" element={<Dashboard />} />  
       <Route path="/profile" element={<Profile />} /> 
       <Route path="/user-search" element={<SeeUsers />} />
