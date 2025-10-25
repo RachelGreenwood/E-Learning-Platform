@@ -9,6 +9,7 @@ import NavBar from "./components/NavBar.jsx";
 import SeeUsers from "./components/UserSearch/SeeUsers.jsx";
 import CreateCourse from "./components/Courses/CreateCourse.jsx";
 import CoursesList from "./components/Courses/CoursesList.jsx";
+import Course from "./components/Courses/Course.jsx";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
       <Route path="/user-search" element={<SeeUsers />} />
       <Route path="/create-course" element={<CreateCourse />} />
       <Route path="/course-list" element={<CoursesList />} />
+      <Route path="/course/:courseId" element={<Course />} />
     </Routes>
     </div>
   );
