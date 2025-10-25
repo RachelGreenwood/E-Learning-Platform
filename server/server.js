@@ -154,6 +154,33 @@ app.delete("/api/profile", verifyJwt, async (req, res) => {
   }
 });
 
+// Organizer can add an event
+app.post("/courses", verifyJwt, async (req, res) => {
+  try {
+    const {
+      name,
+      credits,
+      prereqs,
+      students_allowed
+    } = req.body;
+    const created_by = req.user.sub;
+
+    const newCourse = await pool.query(
+      `INSERT INTO courses 
+      (name, credits, prereqs, students_allowed, created_by)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *`,
+      [name, credits, prereqs, students_allowed, created_by]
+    );
+
+    res.json(newCourse.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
 
 // Start server
 const PORT = process.env.PORT || 5000;
