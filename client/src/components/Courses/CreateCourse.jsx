@@ -83,7 +83,7 @@ export default function CreateCourse() {
                     <select name="prereqs" value={formData.prereqs} onChange={handleChange}>
                         <option>None</option>
                         {courses.map((course) => (
-                          <option>{course.name}</option>
+                          <option key={course.id}>{course.name}</option>
                         ))}
                     </select>
                 </div>
