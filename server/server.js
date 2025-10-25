@@ -180,6 +180,17 @@ app.post("/courses", verifyJwt, async (req, res) => {
   }
 });
 
+// GET all courses from courses table
+app.get("/courses", verifyJwt, async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT * FROM courses`);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ message: "Database error" });
+  }
+});
+
 
 
 // Start server
