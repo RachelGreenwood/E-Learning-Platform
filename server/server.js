@@ -191,7 +191,20 @@ app.get("/courses", verifyJwt, async (req, res) => {
   }
 });
 
-
+// GET single course by ID
+app.get("/courses/:courseId", verifyJwt, async (req, res) => {
+  const { courseId } = req.params;
+  try {
+    const result = await pool.query("SELECT * FROM courses WHERE id = $1", [courseId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Course not found" });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch course" });
+  }
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;
