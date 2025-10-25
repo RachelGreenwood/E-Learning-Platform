@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Link } from "react-router-dom";
 
 export default function CoursesList() {
     const [courses, setCourses] = useState([]);
@@ -29,7 +30,7 @@ export default function CoursesList() {
         <div>
             <h1>See All Courses</h1>
             {courses.length === 0 ? ( <p>No courses found. Check back later!</p>) : (
-                courses.map((course) => <p key={course.id}>{course.name}</p>)
+                courses.map((course) => <Link to={`/course/${course.id}`} key={course.id}>{course.name}</Link>)
             )}
         </div>
     )
