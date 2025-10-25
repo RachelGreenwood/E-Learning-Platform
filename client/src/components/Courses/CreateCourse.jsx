@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function CreateCourse() {
+    const [courses, setCourses] = useState([]);
     const { getAccessTokenSilently } = useAuth0();
 
     const [formData, setFormData] = useState({
@@ -10,6 +11,26 @@ export default function CreateCourse() {
         prereqs: "",
         students_allowed: "",
     });
+
+    useEffect(() => {
+          const getCourses = async () => {
+            try {
+              const token = await getAccessTokenSilently();
+              const response = await fetch("http://localhost:5000/courses", {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (!response.ok) {
+                throw new Error("Failed to fetch courses");
+              }
+              const data = await response.json();
+              setCourses(data);
+            } catch (err) {
+              console.error("Error fetching courses:", err);
+            }
+          };
+      
+          getCourses();
+        }, [getAccessTokenSilently]);
 
     // Updates form with user's input
     const handleChange = (e) => {
@@ -61,6 +82,9 @@ export default function CreateCourse() {
                     <label>Prerequisites: </label>
                     <select name="prereqs" value={formData.prereqs} onChange={handleChange}>
                         <option>None</option>
+                        {courses.map((course) => (
+                          <option>{course.name}</option>
+                        ))}
                     </select>
                 </div>
                 <div>
