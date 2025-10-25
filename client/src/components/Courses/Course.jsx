@@ -30,6 +30,7 @@ export default function Course() {
     return (
         <div>
             <h1>{course.name}</h1>
+            <p>{course.credits}</p>
         </div>
     )
 }
