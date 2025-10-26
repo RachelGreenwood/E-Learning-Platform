@@ -40,6 +40,7 @@ export default function CourseEnrollments() {
                 <table>
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Name</th>
                             <th>Email</th>
                         </tr>
@@ -47,6 +48,7 @@ export default function CourseEnrollments() {
                     <tbody>
                         {students.map((student) => (
                             <tr key={student.id}>
+                                <td><input type="checkbox" /></td>
                                 <td>{student.username}</td>
                                 <td>{student.email}</td>
                             </tr>
