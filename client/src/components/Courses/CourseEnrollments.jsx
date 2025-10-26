@@ -1,7 +1,6 @@
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import AppliedToEnrolled from "./AppliedToEnrolled";
 
 export default function CourseEnrollments() {
     const location = useLocation();
@@ -99,7 +98,7 @@ const handleEnroll = async () => {
             }
             <button onClick={handleEnroll}>Enroll Student(s)</button>
             <div>
-                <AppliedToEnrolled />
+                <h2>Enrolled Students</h2>
                 {enrolledStudents.length === 0 ? (
                     <p>No students have been enrolled yet</p>
                 ) : (
