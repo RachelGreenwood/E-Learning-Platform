@@ -25,6 +25,34 @@ export default function Course() {
     fetchCourse();
   }, [courseId, getAccessTokenSilently]);
 
+   // Handle applying
+  const handleApply = async () => {
+    if (!course) return;
+
+    try {
+      const token = await getAccessTokenSilently();
+      const res = await fetch("http://localhost:5000/user-courses", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ course_id: course.id }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(`Successfully applied for ${course.name}!`);
+      } else {
+        alert(data.error || "Error applying to course");
+      }
+    } catch (err) {
+      console.error("Error applying:", err);
+      alert("Server error. Please try again later.");
+    }
+  };
+
   if (!course) return <p>Loading...</p>;
 
     return (
@@ -33,7 +61,7 @@ export default function Course() {
             <p>Credits: {course.credits}</p>
             <p>Prerequisites: {course.prereqs}</p>
             <p>Max. Number of Students Allowed: {course.students_allowed}</p>
-            <button>Enroll</button>
+            <button onClick={handleApply}>Apply</button>
         </div>
     )
 }
