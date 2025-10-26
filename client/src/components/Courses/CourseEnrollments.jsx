@@ -55,6 +55,7 @@ export default function CourseEnrollments() {
                 </table>
             )
             }
+            <button>Enroll Student(s)</button>
             <AppliedToEnrolled />
         </div>
     )
