@@ -282,6 +282,27 @@ app.get("/user-courses", verifyJwt, async (req, res) => {
   }
 });
 
+// GET all courses created by an instructor
+app.get("/instructor-courses", verifyJwt, async (req, res) => {
+  try {
+    const instructor_id = req.user.sub;
+
+    const result = await pool.query(
+      `SELECT id, name, credits, prereqs, students_allowed
+       FROM courses
+       WHERE created_by = $1
+       ORDER BY id DESC`,
+      [instructor_id]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching instructor courses:", err);
+    res.status(500).json({ error: "Server error fetching instructor courses" });
+  }
+});
+
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
