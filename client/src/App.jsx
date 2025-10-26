@@ -10,6 +10,7 @@ import SeeUsers from "./components/UserSearch/SeeUsers.jsx";
 import CreateCourse from "./components/Courses/CreateCourse.jsx";
 import CoursesList from "./components/Courses/CoursesList.jsx";
 import Course from "./components/Courses/Course.jsx";
+import EnrolledCourses from "./components/Courses/EnrolledCourses.jsx";
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
       <Route path="/create-course" element={<CreateCourse />} />
       <Route path="/course-list" element={<CoursesList />} />
       <Route path="/course/:courseId" element={<Course />} />
+      <Route path="/enrolled-courses" element={<EnrolledCourses />} />
     </Routes>
     </div>
   );

@@ -13,7 +13,7 @@ export default function NavBar({ profile }) {
                         <li><Link className='link' to="/create-course">Create Course</Link></li>
                     )}
                     <li><Link className='link' to="/course-list">Course List</Link></li>
-                    <li><Link>Enrolled Courses</Link></li>
+                    <li><Link className='link' to="/enrolled-courses">Enrolled Courses</Link></li>
                 </ul>
             </nav>
         </div>
