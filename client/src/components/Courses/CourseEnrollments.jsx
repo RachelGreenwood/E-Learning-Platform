@@ -1,6 +1,7 @@
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import AppliedToEnrolled from "./AppliedToEnrolled";
 
 export default function CourseEnrollments() {
     const location = useLocation();
@@ -32,6 +33,7 @@ export default function CourseEnrollments() {
     return (
         <div>
             <h1>{course?.name}</h1>
+            <h2>Applied Students</h2>
             {students.length === 0? (
                 <p>No students have applied yet</p>
             ) : (
@@ -53,6 +55,7 @@ export default function CourseEnrollments() {
                 </table>
             )
             }
+            <AppliedToEnrolled />
         </div>
     )
 }
