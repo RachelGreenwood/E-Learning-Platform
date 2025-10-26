@@ -302,6 +302,26 @@ app.get("/instructor-courses", verifyJwt, async (req, res) => {
   }
 });
 
+// GET all students who have applied to a course
+app.get("/course-students/:courseId", verifyJwt, async (req, res) => {
+  const { courseId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT u.id, u.username, u.email
+       FROM profiles u
+       JOIN user_courses uc ON u.auth0_id = uc.user_id
+       WHERE uc.course_id = $1`,
+      [courseId]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching students:", err);
+    res.status(500).json({ error: "Server error fetching students" });
+  }
+});
+
 
 // Start server
 const PORT = process.env.PORT || 5000;
