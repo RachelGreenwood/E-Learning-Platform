@@ -43,7 +43,7 @@ export default function HandleEnrollments() {
             <tbody>
                 {courses.map((course) => (
             <tr key={course.id}>
-              <td><Link to={`/handle-enrollment/${course.id}`}>{course.name}</Link></td>
+              <td><Link to={`/handle-enrollment/${course.id}`} state={{ course }}>{course.name}</Link></td>
               <td>{course.credits}</td>
               <td>
                 {" "}
