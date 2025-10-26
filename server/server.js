@@ -308,7 +308,7 @@ app.get("/course-students/:courseId", verifyJwt, async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT u.id, u.username, u.email
+      `SELECT u.id, u.username, u.email, uc.status
        FROM profiles u
        JOIN user_courses uc ON u.auth0_id = uc.user_id
        WHERE uc.course_id = $1`,
@@ -319,6 +319,48 @@ app.get("/course-students/:courseId", verifyJwt, async (req, res) => {
   } catch (err) {
     console.error("Error fetching students:", err);
     res.status(500).json({ error: "Server error fetching students" });
+  }
+});
+
+// PUT: Enroll students in a course
+app.put("/enroll-students/:courseId", verifyJwt, async (req, res) => {
+  const { courseId } = req.params;
+  const { studentIds } = req.body;
+
+  try {
+    await pool.query("BEGIN");
+
+// Updates user's status from applied to enrolled
+    const updateStatusQuery = `
+      UPDATE user_courses
+      SET status = 'enrolled'
+      WHERE course_id = $1
+      AND user_id = ANY($2::text[])
+      AND status = 'applied'
+      RETURNING user_id;
+    `;
+    const result = await pool.query(updateStatusQuery, [courseId, studentIds]);
+
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ error: "No matching students found to enroll" });
+    }
+
+// Increments enrolled student in courses table
+    const incrementCountQuery = `
+      UPDATE courses
+      SET enrolled_students = enrolled_students + $1
+      WHERE id = $2;
+    `;
+    await pool.query(incrementCountQuery, [result.rowCount, courseId]);
+
+    await pool.query("COMMIT");
+
+    res.json({ message: "Students enrolled successfully", count: result.rowCount });
+  } catch (err) {
+    await pool.query("ROLLBACK");
+    console.error("Error enrolling students:", err);
+    res.status(500).json({ error: "Server error enrolling students" });
   }
 });
 
