@@ -41,12 +41,9 @@ export default function HandleEnrollments() {
                 </tr>
             </thead>
             <tbody>
-              {/* {courses.length === 0 ? ( <p>No courses found. Check back later!</p>) : (
-                courses.map((course) => <Link to={`/course/${course.id}`} key={course.id}>{course.name}</Link>)
-            )} */}
                 {courses.map((course) => (
             <tr key={course.id}>
-              <td><Link to={`/course/${course.id}`}>{course.name}</Link></td>
+              <td><Link to={`/handle-enrollment/${course.id}`}>{course.name}</Link></td>
               <td>{course.credits}</td>
               <td>
                 {" "}

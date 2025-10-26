@@ -12,6 +12,7 @@ import CoursesList from "./components/Courses/CoursesList.jsx";
 import Course from "./components/Courses/Course.jsx";
 import EnrolledCourses from "./components/Courses/EnrolledCourses.jsx";
 import HandleEnrollments from "./components/HandleEnrollments.jsx";
+import CourseEnrollments from "./components/Courses/CourseEnrollments.jsx";
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
       <Route path="/course/:courseId" element={<Course />} />
       <Route path="/enrolled-courses" element={<EnrolledCourses />} />
       <Route path="/handle-enrollment" element={<HandleEnrollments />} />
+      <Route path="/handle-enrollment/:courseId" element={<CourseEnrollments />} />
     </Routes>
     </div>
   );
