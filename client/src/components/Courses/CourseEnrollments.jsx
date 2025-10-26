@@ -8,7 +8,9 @@ export default function CourseEnrollments() {
     const course = location.state?.course;
     const { courseId } = useParams();
     const { getAccessTokenSilently } = useAuth0();
-    const [students, setStudents] = useState([]);
+    const [appliedStudents, setAppliedStudents] = useState([]);
+    const [enrolledStudents, setEnrolledStudents] = useState([]);
+    const [selectedStudents, setSelectedStudents] = useState([]);
 
     useEffect(() => {
     const fetchStudents = async () => {
@@ -21,7 +23,8 @@ export default function CourseEnrollments() {
         if (!res.ok) throw new Error("Failed to fetch students");
 
         const data = await res.json();
-        setStudents(data);
+        setAppliedStudents(data.filter((s) => s.status === "applied"));
+        setEnrolledStudents(data.filter((s) => s.status === "enrolled"));
       } catch (err) {
         console.error(err);
       }
@@ -30,11 +33,48 @@ export default function CourseEnrollments() {
     fetchStudents();
   }, [courseId, getAccessTokenSilently]);
 
+
+const handleCheckboxChange = (studentId) => {
+  setSelectedStudents((prev) =>
+    prev.includes(studentId)
+      ? prev.filter((id) => id !== studentId)
+      : [...prev, studentId]
+  );
+};
+
+const handleEnroll = async () => {
+  try {
+    const token = await getAccessTokenSilently();
+    const res = await fetch(`http://localhost:5000/course-students/${courseId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ studentIds: selectedStudents }),
+    });
+    console.log("Enrolling students:", selectedStudents, "for courseId:", courseId);
+
+
+    if (!res.ok) throw new Error("Failed to enroll students");
+
+    const newlyEnrolled = appliedStudents.filter((s) => selectedStudents.includes(s.id));
+    setAppliedStudents((prev) => prev.filter((s) => !selectedStudents.includes(s.id)));
+    alert("Students successfully enrolled!");
+    setEnrolledStudents((prev) => [...prev, ...newlyEnrolled])
+    setSelectedStudents([]);
+    // Re-fetch students to update the UI
+  } catch (err) {
+    console.error(err);
+    alert("Error enrolling students");
+  }
+};
+
     return (
         <div>
             <h1>{course?.name}</h1>
             <h2>Applied Students</h2>
-            {students.length === 0? (
+            {appliedStudents.length === 0? (
                 <p>No students have applied yet</p>
             ) : (
                 <table>
@@ -46,9 +86,9 @@ export default function CourseEnrollments() {
                         </tr>
                     </thead>
                     <tbody>
-                        {students.map((student) => (
+                        {appliedStudents.map((student) => (
                             <tr key={student.id}>
-                                <td><input type="checkbox" /></td>
+                                <td><input type="checkbox" checked={selectedStudents.includes(student.id)} onChange={() => handleCheckboxChange(student.id)} /></td>
                                 <td>{student.username}</td>
                                 <td>{student.email}</td>
                             </tr>
@@ -57,8 +97,38 @@ export default function CourseEnrollments() {
                 </table>
             )
             }
-            <button>Enroll Student(s)</button>
-            <AppliedToEnrolled />
+            <button onClick={handleEnroll}>Enroll Student(s)</button>
+            <div>
+                <AppliedToEnrolled />
+                {enrolledStudents.length === 0 ? (
+                    <p>No students have been enrolled yet</p>
+                ) : (
+                    <table>
+                    <thead>
+                        <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {enrolledStudents.map((student) => (
+                        <tr key={student.id}>
+                            <td>
+                            <input
+                                type="checkbox"
+                                checked={selectedStudents.includes(student.id)}
+                                onChange={() => handleCheckboxChange(student.id)}
+                            />
+                            </td>
+                            <td>{student.username}</td>
+                            <td>{student.email}</td>
+                        </tr>
+                        ))}
+                    </tbody>
+                    </table>
+                )}
+            </div>
         </div>
     )
 }
