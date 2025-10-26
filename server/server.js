@@ -206,6 +206,62 @@ app.get("/courses/:courseId", verifyJwt, async (req, res) => {
   }
 });
 
+// POST: User applies to a course
+app.post("/user-courses", verifyJwt, async (req, res) => {
+  try {
+    const { course_id } = req.body;
+    const user_id = req.user.sub;
+
+    // Get the course info
+    const courseQuery = await pool.query(
+      "SELECT name, prereqs, created_by FROM courses WHERE id = $1",
+      [course_id]
+    );
+
+    if (courseQuery.rows.length === 0) {
+      return res.status(404).json({ error: "Course not found" });
+    }
+
+    const course = courseQuery.rows[0];
+
+    // Get the teacher's name from their profile
+    const teacherQuery = await pool.query(
+      "SELECT username FROM profiles WHERE auth0_id = $1",
+      [course.created_by]
+    );
+
+    const teacher_name =
+      teacherQuery.rows.length > 0 ? teacherQuery.rows[0].username : "Unknown";
+
+    let prereqsArray = [];
+    if (Array.isArray(course.prereqs)) {
+      prereqsArray = course.prereqs;
+    } else if (typeof course.prereqs === "string" && course.prereqs.trim() !== "") {
+      prereqsArray = [course.prereqs];
+    }
+
+    // Insert the course application
+    const newApp = await pool.query(
+      `INSERT INTO user_courses 
+      (user_id, course_id, course_name, teacher_name, prerequisites)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *`,
+      [user_id, course_id, course.name, teacher_name, prereqsArray]
+    );
+
+    res.status(201).json(newApp.rows[0]);
+  } catch (err) {
+    console.error("Error applying to course:", err);
+
+    // Error handling if user has already applied to the course
+    if (err.code === "23505") {
+      return res.status(400).json({ error: "Already applied to this course" });
+    }
+
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
