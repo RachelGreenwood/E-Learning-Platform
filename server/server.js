@@ -262,6 +262,26 @@ app.post("/user-courses", verifyJwt, async (req, res) => {
   }
 });
 
+// GETs the courses a user has applied to
+app.get("/user-courses", verifyJwt, async (req, res) => {
+  try {
+    const user_id = req.user.sub;
+
+    const result = await pool.query(
+      `SELECT id, course_id, course_name, teacher_name, prerequisites, status
+       FROM user_courses
+       WHERE user_id = $1
+       ORDER BY id DESC`,
+      [user_id]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching user courses:", err);
+    res.status(500).json({ error: "Server error fetching user courses" });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
