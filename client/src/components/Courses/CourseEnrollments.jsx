@@ -44,6 +44,40 @@ const handleCheckboxChange = (studentId) => {
   );
 };
 
+// Removes students from course
+const handleDelete = async () => {
+    if (selectedStudents.length === 0) {
+        alert("No students selected for deletion");
+        return;
+    }
+
+    if (!window.confirm("Are you sure you want to delete the selected student(s)?")) {
+        return;
+    }
+
+    try {
+        const token = await getAccessTokenSilently();
+        const res = await fetch(`${apiUrl}/course-students/${courseId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ studentIds: selectedStudents }),
+        });
+
+        if (!res.ok) throw new Error("Failed to delete students");
+
+        setAppliedStudents((prev) => prev.filter((s) => !selectedStudents.includes(s.id)));
+        setEnrolledStudents((prev) => prev.filter((s) => !selectedStudents.includes(s.id)));
+        setSelectedStudents([]);
+        alert("Selected students deleted successfully!");
+    } catch (err) {
+        console.error(err);
+        alert("Error deleting students");
+    }
+};
+
 const handleEnroll = async () => {
   try {
     const token = await getAccessTokenSilently();
@@ -118,6 +152,7 @@ const handleEnroll = async () => {
             )
             }
             <button onClick={handleEnroll}>Enroll Student(s)</button>
+            <button onClick={handleDelete}>Delete Student(s)</button>
             <div>
                 <h2>Enrolled Students</h2>
                 <div>

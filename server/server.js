@@ -447,6 +447,33 @@ app.delete("/courses/:courseId", verifyJwt, async (req, res) => {
   }
 });
 
+// Rmeoves student(s) from a course
+app.delete("/course-students/:courseId", verifyJwt, async (req, res) => {
+  const { courseId } = req.params;
+  const { studentIds } = req.body;
+
+  if (!Array.isArray(studentIds) || studentIds.length === 0) {
+    return res.status(400).json({ error: "No student IDs provided" });
+  }
+
+  try {
+    const query = `
+      DELETE FROM user_courses
+      WHERE course_id = $1 AND user_id = ANY($2::text[])
+      RETURNING *;
+    `;
+
+    const result = await pool.query(query, [courseId, studentIds]);
+
+    res.status(200).json({
+      message: `${result.rowCount} student(s) removed from course`,
+      deletedStudents: result.rows,
+    });
+  } catch (err) {
+    console.error("Error deleting students from course:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 
 // Start server
