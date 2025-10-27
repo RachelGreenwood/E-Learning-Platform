@@ -5,6 +5,7 @@ import pool from "./db.js";
 import jwt from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
