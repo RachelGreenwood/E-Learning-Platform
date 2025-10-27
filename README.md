@@ -213,3 +213,12 @@ CREATE TABLE user_courses (
   prerequisites TEXT[],
   status TEXT DEFAULT 'applied'
 );```
+
+## Database Dump
+
+A PostgreSQL dump file `kyu_to_dan_dump.sql` is included for easy setup of the database.  
+To restore the database:
+
+```bash
+createdb -U <your_postgres_username> kyu_to_dan
+psql -U <your_postgres_username> -d kyu_to_dan -f kyu_to_dan_dump.sql
