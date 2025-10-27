@@ -7,8 +7,9 @@ export default function StudentDetails({ student }) {
 
     return (
         <div>
-            <h1>Student Details</h1>
-            <p>{student.username}</p>
+            <h2>{student.username}</h2>
+            <p>Email: {student.email}</p>
+            <p>Discipline: {student.discipline}</p>
         </div>
     )
 }
