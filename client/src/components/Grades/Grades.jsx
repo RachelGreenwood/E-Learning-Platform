@@ -21,10 +21,9 @@ export default function Grades() {
         <div>
             <h1>Manage Grades</h1>
             <select>
-                {users.map((user) => {
+                {users.map((user) => (
                     <option key={user.id}>{user.username}</option>
-                })}
-                <option>.</option>
+                ))}
             </select>
         </div>
     )
