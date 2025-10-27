@@ -222,3 +222,23 @@ To restore the database:
 ```bash
 createdb -U <your_postgres_username> kyu_to_dan
 psql -U <your_postgres_username> -d kyu_to_dan -f kyu_to_dan_dump.sql
+
+## Frontend Routes
+
+This section documents the main routes in the React frontend and the components they render.
+
+| Route Path                     | Component Rendered              | Description |
+|--------------------------------|--------------------------------|-------------|
+| `/`                            | `HomePage`                     | Landing page of the application |
+| `/profile-setup`               | `ProfileSetup`                 | Form for new users to set up their profile |
+| `/dashboard`                   | `Dashboard`                    | Main dashboard after login |
+| `/profile`                     | `Profile`                      | View and edit user profile |
+| `/user-search`                 | `SeeUsers`                     | Search and view other users (instructors/students) |
+| `/create-course`               | `CreateCourse`                 | Form for instructors to create a new course |
+| `/course-list`                 | `CoursesList`                  | List all available courses |
+| `/course/:courseId`            | `Course`                       | View details for a specific course |
+| `/enrolled-courses`            | `EnrolledCourses`              | View courses the user is enrolled in |
+| `/handle-enrollment`           | `HandleEnrollments`            | Instructor view for managing course enrollment |
+| `/handle-enrollment/:courseId` | `CourseEnrollments`            | Manage enrollments for a specific course |
+| `/grades`                      | `Grades`                       | View grades for all courses relevant to the user |
+| `/my-courses`                  | `MyCourses`                    | View courses the user has taken or is enrolled in |
