@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 export default function CoursesList() {
     const [courses, setCourses] = useState([]);
     const { getAccessTokenSilently } = useAuth0();
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
       const getCourses = async () => {
@@ -26,11 +27,20 @@ export default function CoursesList() {
       getCourses();
     }, [getAccessTokenSilently]);
 
+    const filteredCourses = courses.filter((course) => {
+    const matchesSearch = course.name.toLowerCase().includes(searchTerm.toLowerCase());;
+    return matchesSearch;
+  });
+
     return (
         <div>
             <h1>See All Courses</h1>
-            {courses.length === 0 ? ( <p>No courses found. Check back later!</p>) : (
-                courses.map((course) => <Link to={`/course/${course.id}`} key={course.id}>{course.name}</Link>)
+            <div>
+              <label>Search by Course Name: </label>
+              <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            </div>
+            {filteredCourses.length === 0 ? ( <p>No courses found. Check back later!</p>) : (
+                filteredCourses.map((course) => <Link to={`/course/${course.id}`} key={course.id}>{course.name}</Link>)
             )}
         </div>
     )
