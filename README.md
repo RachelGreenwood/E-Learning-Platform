@@ -242,3 +242,59 @@ This section documents the main routes in the React frontend and the components 
 | `/handle-enrollment/:courseId` | `CourseEnrollments`            | Manage enrollments for a specific course |
 | `/grades`                      | `Grades`                       | View grades for all courses relevant to the user |
 | `/my-courses`                  | `MyCourses`                    | View courses the user has taken or is enrolled in |
+
+## Authentication
+
+This application uses **Auth0** for authentication. Users must log in to access most of the app’s features.  
+
+### How It Works
+
+1. **Login**
+   - Users are redirected to Auth0 to authenticate.
+   - Upon successful login, Auth0 issues a JSON Web Token (JWT) that is stored in the client.
+
+2. **JWT Verification**
+   - The frontend sends the JWT in the `Authorization` header for protected API requests.
+   - Backend routes that require authentication use the `verifyJwt` middleware to validate the token.
+
+3. **Protected Routes**
+   The following backend API routes require a valid JWT:
+
+   - `GET /api/profile` – Fetch logged-in user profile
+   - `POST /api/profile` – Create a user profile
+   - `PUT /api/profile` – Update user profile
+   - `DELETE /api/profile` – Delete user profile
+   - `POST /courses` – Create a course (instructors only)
+   - `PUT /courses/:id` – Update course details (instructors only)
+   - `POST /user-courses` – Apply for a course
+   - `PUT /course-students/:courseId` – Enroll students in a course (instructors only)
+   - `GET /user-courses` – Get courses applied/enrolled by a student
+   - `GET /instructor-courses` – Get courses created by an instructor
+   - `GET /course-students/:courseId` – Get students for a course
+   - `GET /student-courses` – Instructor view of a student’s enrolled courses
+
+4. **Frontend Protected Pages**
+   - `/dashboard`
+   - `/profile`
+   - `/profile-setup`
+   - `/create-course`
+   - `/handle-enrollment`
+   - `/enrolled-courses`
+   - `/grades`
+   - `/my-courses`
+
+5. **Environment Variables**
+   - Backend `.env`:
+     ```env
+     AUTH0_DOMAIN=<your_auth0_domain>
+     AUTH0_AUDIENCE=<your_auth0_audience>
+     ```
+   - Frontend `.env`:
+     ```env
+     VITE_AUTH0_DOMAIN=<your_auth0_domain>
+     VITE_AUTH0_CLIENT_ID=<your_auth0_client_id>
+     VITE_AUTH0_AUDIENCE=<your_auth0_audience>
+     VITE_AUTH0_REDIRECT_URI=http://localhost:5173
+     ```
+
+> **Note:** Users cannot access protected routes or pages without logging in via Auth0. Make sure your Auth0 application allows the redirect URI configured in your frontend `.env`.
