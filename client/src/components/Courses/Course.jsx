@@ -6,6 +6,8 @@ export default function Course() {
     const { courseId } = useParams();
     const { getAccessTokenSilently } = useAuth0();
     const [course, setCourse] = useState(null);
+    const [completedCourses, setCompletedCourses] = useState([]);
+    const [canApply, setCanApply] = useState(false);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -15,8 +17,25 @@ export default function Course() {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch event");
-        const data = await res.json();
-        setCourse(data);
+        const courseData = await res.json();
+        setCourse(courseData);
+
+        // Fetch user's enrolled courses
+        const enrolledRes = await fetch("http://localhost:5000/user-courses?status=enrolled", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!enrolledRes.ok) throw new Error("Failed to fetch enrolled courses");
+        const enrolledData = await enrolledRes.json();
+        setCompletedCourses(enrolledData.map((c) => c.course_name))
+        // Check prerequisites
+        let prereqsArray = [];
+        if (Array.isArray(courseData.prereqs)) {
+          prereqsArray = courseData.prereqs;
+        } else if (typeof courseData.prereqs === "string" && courseData.prereqs.trim() !== "") {
+          prereqsArray = [courseData.prereqs];
+        }
+        const allPrereqsMet = prereqsArray.every((p) => enrolledData.some((c) => c.course_name === p));
+        setCanApply(allPrereqsMet);
       } catch (err) {
         console.error(err);
       }
@@ -61,7 +80,7 @@ export default function Course() {
             <p>Credits: {course.credits}</p>
             <p>Prerequisites: {course.prereqs}</p>
             <p>Max. Number of Students Allowed: {course.students_allowed}</p>
-            <button onClick={handleApply}>Apply</button>
+            <button onClick={handleApply} disabled={!canApply}>Apply</button>
         </div>
     )
 }
