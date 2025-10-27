@@ -514,21 +514,6 @@ app.get("/grades/:studentId/:courseId", verifyJwt, async (req, res) => {
   }
 });
 
-if (process.env.NODE_ENV === "production") {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-
-  // Serve static files from the build/dist folder
-  app.use(express.static(path.join(__dirname, 'dist')));
-
-  // SPA catch-all for frontend routes
-  app.get('/*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-    }
-  });
-}
-
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
