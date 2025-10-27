@@ -368,6 +368,24 @@ app.put("/course-students/:courseId", verifyJwt, async (req, res) => {
   }
 });
 
+// Edits course details
+app.put("/courses/:id", verifyJwt, async (req, res) => {
+  const { id } = req.params;
+  const { name, credits, prereqs, students_allowed } = req.body;
+
+  try {
+    const result = await pool.query(
+      "UPDATE courses SET name=$1, credits=$2, prereqs=$3, students_allowed=$4 WHERE id=$5 RETURNING *",
+      [name, credits, prereqs, students_allowed, id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error updating course:", err);
+    res.status(500).json({ error: "Database update failed" });
+  }
+});
+
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

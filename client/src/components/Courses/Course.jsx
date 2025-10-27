@@ -8,6 +8,9 @@ export default function Course() {
     const [course, setCourse] = useState(null);
     const [completedCourses, setCompletedCourses] = useState([]);
     const [canApply, setCanApply] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editData, setEditData] = useState({});
+    const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -19,6 +22,7 @@ export default function Course() {
         if (!res.ok) throw new Error("Failed to fetch event");
         const courseData = await res.json();
         setCourse(courseData);
+        setEditData(courseData);
 
         // Fetch user's enrolled courses
         const enrolledRes = await fetch("http://localhost:5000/user-courses?status=enrolled", {
@@ -39,6 +43,25 @@ export default function Course() {
       } catch (err) {
         console.error(err);
       }
+
+      // Fetches all courses for prereq dropdown
+      const getCourses = async () => {
+            try {
+              const token = await getAccessTokenSilently();
+              const response = await fetch("http://localhost:5000/courses", {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (!response.ok) {
+                throw new Error("Failed to fetch courses");
+              }
+              const data = await response.json();
+              setCourses(data);
+            } catch (err) {
+              console.error("Error fetching courses:", err);
+            }
+          };
+      
+          getCourses();
     };
 
     fetchCourse();
@@ -72,17 +95,96 @@ export default function Course() {
     }
   };
 
+  // Handles form field changes when editing
+  const handleEditChange = (e) => {
+    setEditData({ ...editData, [e.target.name]: e.target.value });
+  };
+
+  // Handles editing form updates
+   const handleUpdate = async () => {
+    try {
+      const token = await getAccessTokenSilently();
+      const res = await fetch(`http://localhost:5000/courses/${courseId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editData),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("Course updated successfully!");
+        setCourse(data);
+        setIsEditing(false);
+      } else {
+        alert(data.error || "Error updating course");
+      }
+    } catch (err) {
+      console.error("Error updating course:", err);
+      alert("Server error.");
+    }
+  };
+
   if (!course) return <p>Loading...</p>;
 
     return (
         <div>
-            <h1>{course.name}</h1>
-            <p>Credits: {course.credits}</p>
-            <p>Prerequisites: {course.prereqs}</p>
-            <p>Max. Number of Students Allowed: {course.students_allowed}</p>
-            <p>Students Enrolled: {course.enrolled_students}</p>
-            <button>Edit Course</button>
+            {/* EDIT MODE */}
+            {isEditing ? (
+              <div>
+                <div>
+                  <label>Course Name: </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={editData.name}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div>
+                  <label>Credits: </label>
+                  <input
+                    type="number"
+                    name="credits"
+                    value={editData.credits}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div>
+                  <label>Prerequisites: </label>
+                  <select name="prereqs" value={editData.prereqs} onChange={handleEditChange}>
+                    <option>None</option>
+                    {courses.map((course) => (
+                      <option key={course.id} value={course.name}>{course.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label>Max Students Allowed: </label>
+                  <input
+                    type="number"
+                    name="students_allowed"
+                    value={editData.students_allowed}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <button onClick={handleUpdate}>Update</button>
+                <button onClick={() => setIsEditing(false)}>Cancel</button>
+              </div>
+            ) : (
+              // VIEW MODE
+              <div>
+                <h2>{course.name}</h2>
+                <p>Credits: {course.credits}</p>
+                <p>Prerequisites: {course.prereqs}</p>
+                <p>Max. Number of Students Allowed: {course.students_allowed}</p>
+                <p>Students Enrolled: {course.enrolled_students}</p>
+            <button onClick={() => setIsEditing(true)}>Edit Course</button>
             <button onClick={handleApply} disabled={!canApply || course.enrolled_students >= course.students_allowed}>Apply</button>
+            </div>
+            )}
         </div>
-    )
+  )
 }
