@@ -1,8 +1,46 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useState } from "react";
-import CourseGrades from "./CourseGrades";
 
 export default function StudentDetails({ student, enrolledCourses }) {
+    const [gradesInput, setGradesInput] = useState(
+        enrolledCourses.reduce((acc, course) => {
+            acc[course.course_id] = { assignmentName: "", grade: "" };
+            return acc;
+        }, {})
+    );
+    const { getAccessTokenSilently } = useAuth0();
+    const apiUrl = import.meta.env.VITE_API_URL;
+
+    const handleSubmitGrade = async (courseId) => {
+    const { assignmentName, grade } = gradesInput[courseId] || {};
+    if (!assignmentName || !grade) return alert("Fill in both fields");
+
+    try {
+        const token = await getAccessTokenSilently();
+        const res = await fetch(`${apiUrl}/grades`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+            courseId,
+            studentId: student.auth0_id,
+            assignmentName,
+            grade,
+        }),
+        });
+
+        if (!res.ok) throw new Error("Failed to submit grade");
+
+        alert("Grade submitted!");
+        // Optionally, update UI to show the grade immediately
+    } catch (err) {
+        console.error(err);
+        alert("Error submitting grade");
+    }
+    };
+
 
     if (!student) {
     return <p>No student selected</p>;
@@ -26,12 +64,34 @@ export default function StudentDetails({ student, enrolledCourses }) {
                         : "None"}
                     </span>
                 </div>
-
-                {/* Grade input inline */}
+{/* Teacher can assign grades */}
                 <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
-                    <input type="text" placeholder="Assignment Title" />
-                    <input type="text" placeholder="Grade" />
-                    <button>Submit Grade</button>
+                    <input type="text" placeholder="Assignment" value={gradesInput[course.course_id]?.assignmentName || ""}
+                                onChange={(e) =>
+                                    setGradesInput((prev) => ({
+                                        ...prev,
+                                        [course.course_id]: {
+                                            ...prev[course.course_id],
+                                            assignmentName: e.target.value,
+                                        },
+                                    }))
+                                }
+                            />
+                    <input
+                        type="text"
+                        placeholder="Grade"
+                        value={gradesInput[course.course_id]?.grade || ""}
+                        onChange={(e) =>
+                            setGradesInput((prev) => ({
+                            ...prev,
+                            [course.course_id]: {
+                                ...prev[course.course_id],
+                                grade: e.target.value,
+                            },
+                            }))
+                        }
+                    />
+                    <button onClick={() => handleSubmitGrade(course.course_id)}>Submit Grade</button>
                 </div>
                 </div>
             ))}
