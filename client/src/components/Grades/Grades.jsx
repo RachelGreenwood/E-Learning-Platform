@@ -17,11 +17,13 @@ export default function Grades() {
         fetchUsers();
       }, []);
 
+      const students = users.filter(user => user.role === "Student")
+
     return (
         <div>
             <h1>Manage Grades</h1>
             <select>
-                {users.map((user) => (
+                {students.map((user) => (
                     <option key={user.id}>{user.username}</option>
                 ))}
             </select>
