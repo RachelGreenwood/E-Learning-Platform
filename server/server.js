@@ -412,6 +412,41 @@ app.get("/student-courses", verifyJwt, async (req, res) => {
   }
 });
 
+// DELETEs a course
+app.delete("/courses/:courseId", verifyJwt, async (req, res) => {
+  const { courseId } = req.params;
+  const auth0Id = req.user.sub; // from verifyJwt
+
+  try {
+    // Check if course exists and belongs to this teacher
+    const courseRes = await pool.query(
+      "SELECT * FROM courses WHERE id = $1",
+      [courseId]
+    );
+
+    if (courseRes.rows.length === 0) {
+      return res.status(404).json({ error: "Course not found" });
+    }
+
+    const course = courseRes.rows[0];
+
+    if (course.created_by !== auth0Id) {
+      return res.status(403).json({ error: "Not authorized to delete this course" });
+    }
+
+    // Delete the course
+    await pool.query("DELETE FROM courses WHERE id = $1", [courseId]);
+
+    // Optionally, delete related enrollments (user_courses)
+    await pool.query("DELETE FROM user_courses WHERE course_id = $1", [courseId]);
+
+    res.status(200).json({ message: "Course deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting course:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 
 // Start server
