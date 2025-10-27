@@ -267,6 +267,10 @@ app.get("/user-courses", verifyJwt, async (req, res) => {
   try {
     const user_id = req.user.sub;
 
+    if (!user_id) {
+      return res.status(400).json({ error: "Missing user_id query param" });
+    }
+
     const result = await pool.query(
       `SELECT id, course_id, course_name, teacher_name, prerequisites, status
        FROM user_courses
@@ -274,6 +278,7 @@ app.get("/user-courses", verifyJwt, async (req, res) => {
        ORDER BY id DESC`,
       [user_id]
     );
+    console.log(user_id);
 
     res.json(result.rows);
   } catch (err) {
@@ -384,6 +389,29 @@ app.put("/courses/:id", verifyJwt, async (req, res) => {
     res.status(500).json({ error: "Database update failed" });
   }
 });
+
+// backend route for instructors to fetch any student's courses
+app.get("/student-courses", verifyJwt, async (req, res) => {
+  try {
+    const studentId = req.query.user_id;
+    if (!studentId) return res.status(400).json({ error: "Missing user_id query param" });
+
+    const result = await pool.query(
+      `SELECT id, course_id, course_name, teacher_name, prerequisites, status
+       FROM user_courses
+       WHERE user_id = $1
+       AND status = 'enrolled'
+       ORDER BY id DESC`,
+      [studentId]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching student courses:", err);
+    res.status(500).json({ error: "Server error fetching student courses" });
+  }
+});
+
 
 
 // Start server
