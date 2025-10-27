@@ -80,6 +80,7 @@ export default function Course() {
             <p>Credits: {course.credits}</p>
             <p>Prerequisites: {course.prereqs}</p>
             <p>Max. Number of Students Allowed: {course.students_allowed}</p>
+            <p>Students Enrolled: {course.enrolled_students}</p>
             <button onClick={handleApply} disabled={!canApply}>Apply</button>
         </div>
     )
