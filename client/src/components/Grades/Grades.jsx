@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import StudentDetails from "./StudentDetails";
 
 export default function Grades(props) {
     const [users, setUsers] = useState([]);
@@ -32,6 +33,7 @@ export default function Grades(props) {
                 ))}
             </select>
             )}
+            <StudentDetails />
         </div>
     )
 }
