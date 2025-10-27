@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function Grades() {
+export default function Grades(props) {
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchUsers() {
@@ -22,11 +24,13 @@ export default function Grades() {
     return (
         <div>
             <h1>Manage Grades</h1>
-            <select>
+            {props.profile?.role === "Instructor" && (
+                <select>
                 {students.map((user) => (
                     <option key={user.id}>{user.username}</option>
                 ))}
             </select>
+            )}
         </div>
     )
 }

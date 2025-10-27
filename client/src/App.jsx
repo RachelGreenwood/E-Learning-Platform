@@ -56,7 +56,7 @@ function App() {
       <Route path="/enrolled-courses" element={<EnrolledCourses />} />
       <Route path="/handle-enrollment" element={<HandleEnrollments />} />
       <Route path="/handle-enrollment/:courseId" element={<CourseEnrollments />} />
-      <Route path="/grades" element={<Grades />} />
+      <Route path="/grades" element={<Grades profile={profile} />} />
     </Routes>
     </div>
   );
