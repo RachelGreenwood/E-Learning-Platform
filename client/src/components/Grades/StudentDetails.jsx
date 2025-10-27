@@ -10,6 +10,7 @@ export default function StudentDetails({ student, enrolledCourses }) {
     );
     const { getAccessTokenSilently } = useAuth0();
     const apiUrl = import.meta.env.VITE_API_URL;
+    const [grades, setGrades] = useState({});
 
     const handleSubmitGrade = async (courseId) => {
     const { assignmentName, grade } = gradesInput[courseId] || {};
@@ -32,6 +33,18 @@ export default function StudentDetails({ student, enrolledCourses }) {
         });
 
         if (!res.ok) throw new Error("Failed to submit grade");
+        const newGrade = await res.json();
+
+        setGrades((prev) => ({
+            ...prev,
+            [courseId]: [...(prev[courseId] || []), newGrade],
+        }));
+
+        // Clear the input fields
+        setGradesInput((prev) => ({
+            ...prev,
+            [courseId]: { assignmentName: "", grade: "" },
+        }));
 
         alert("Grade submitted!");
         // Optionally, update UI to show the grade immediately
@@ -63,6 +76,17 @@ export default function StudentDetails({ student, enrolledCourses }) {
                         ? course.prerequisites.join(", ")
                         : "None"}
                     </span>
+                </div>
+                <div>
+                    {grades[course.course_id]?.length > 0 && (
+                        <ul style={{ marginTop: "0.5rem" }}>
+                            {grades[course.course_id].map((g, idx) => (
+                            <li key={idx}>
+                                {g.assignment_name}: {g.grade}
+                            </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
 {/* Teacher can assign grades */}
                 <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
