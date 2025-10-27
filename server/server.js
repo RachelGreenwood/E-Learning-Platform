@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import pool from "./db.js";
 import jwt from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
+import path from 'path';
 
 dotenv.config();
 
@@ -475,6 +476,57 @@ app.delete("/course-students/:courseId", verifyJwt, async (req, res) => {
   }
 });
 
+// POSTs student's grades
+app.post("/grades", verifyJwt, async (req, res) => {
+  const { courseId, studentId, assignmentName, grade } = req.body;
+
+  if (!courseId || !studentId || !assignmentName || !grade) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const query = `
+      INSERT INTO grades (course_id, student_id, assignment_name, grade)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+    `;
+    const result = await pool.query(query, [courseId, studentId, assignmentName, grade]);
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error inserting grade:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// GET grades
+app.get("/grades/:studentId/:courseId", verifyJwt, async (req, res) => {
+  const { studentId, courseId } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT * FROM grades WHERE student_id = $1 AND course_id = $2 ORDER BY created_at DESC",
+      [studentId, courseId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching grades:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+if (process.env.NODE_ENV === "production") {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+
+  // Serve static files from the build/dist folder
+  app.use(express.static(path.join(__dirname, 'dist')));
+
+  // SPA catch-all for frontend routes
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    }
+  });
+}
 
 // Start server
 const PORT = process.env.PORT || 5000;
