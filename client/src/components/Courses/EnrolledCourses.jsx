@@ -5,13 +5,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 export default function EnrolledCourses() {
     const { getAccessTokenSilently } = useAuth0();
     const [applied, setApplied] = useState([]);
+    const apiUrl = import.meta.env.VITE_API_URL;
     const [enrolled, setEnrolled] = useState([]);
 
     useEffect(() => {
         const fetchUserCourses = async () => {
         try {
             const token = await getAccessTokenSilently();
-            const res = await fetch("http://localhost:5000/user-courses", {
+            const res = await fetch(`${apiUrl}/user-courses`, {
             headers: { Authorization: `Bearer ${token}` },
             });
             if (!res.ok) throw new Error("Failed to fetch user courses");

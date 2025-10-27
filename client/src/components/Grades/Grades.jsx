@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 export default function Grades(props) {
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         async function fetchUsers() {
           try {
-            const res = await fetch("http://localhost:5000/api/profiles");
+            const res = await fetch(`${apiUrl}/api/profiles`);
             const data = await res.json();
             setUsers(data);
           } catch (err) {

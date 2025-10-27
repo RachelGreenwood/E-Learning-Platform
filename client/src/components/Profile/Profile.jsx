@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { getAccessTokenSilently, logout } = useAuth0();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const [formData, setFormData] = useState({
     email: "",
@@ -22,7 +23,7 @@ export default function Profile() {
           audience: import.meta.env.VITE_AUTH0_AUDIENCE,
         });
 
-        const res = await fetch("http://localhost:5000/api/profile", {
+        const res = await fetch(`$apiUrl}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -60,7 +61,7 @@ export default function Profile() {
         audience: import.meta.env.VITE_AUTH0_AUDIENCE,
       });
 
-      const res = await fetch("http://localhost:5000/api/profile", {
+      const res = await fetch(`${apiUrl}/api/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +106,7 @@ export default function Profile() {
   try {
     const token = await getAccessTokenSilently();
 
-    const res = await fetch("http://localhost:5000/api/profile", {
+    const res = await fetch(`${apiUrl}/api/profile`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

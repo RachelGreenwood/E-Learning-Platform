@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function AuthenticationButton() {
     const { loginWithRedirect, logout, user, isAuthenticated, getAccessTokenSilently } = useAuth0();
     const navigate = useNavigate();
+    const apiUrl = import.meta.env.VITE_API_URL;
 
       // If user already has a profile, go to Dashboard page. If not, go to Profile Setup page
   useEffect(() => {
@@ -16,7 +17,7 @@ export default function AuthenticationButton() {
           audience: import.meta.env.VITE_AUTH0_AUDIENCE,
         });
 
-        const response = await fetch("http://localhost:5000/api/profile", {
+        const response = await fetch(`${apiUrl}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

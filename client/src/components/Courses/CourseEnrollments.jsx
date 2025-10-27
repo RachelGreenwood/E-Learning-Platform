@@ -10,13 +10,14 @@ export default function CourseEnrollments() {
     const [appliedStudents, setAppliedStudents] = useState([]);
     const [enrolledStudents, setEnrolledStudents] = useState([]);
     const [selectedStudents, setSelectedStudents] = useState([]);
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
     const fetchStudents = async () => {
       try {
         const token = await getAccessTokenSilently();
         const res = await fetch(
-          `http://localhost:5000/course-students/${courseId}`,
+          `${apiUrl}/course-students/${courseId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) throw new Error("Failed to fetch students");
@@ -44,7 +45,7 @@ const handleCheckboxChange = (studentId) => {
 const handleEnroll = async () => {
   try {
     const token = await getAccessTokenSilently();
-    const res = await fetch(`http://localhost:5000/course-students/${courseId}`, {
+    const res = await fetch(`${apiUrl}/course-students/${courseId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

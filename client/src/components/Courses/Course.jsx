@@ -11,12 +11,13 @@ export default function Course() {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({});
     const [courses, setCourses] = useState([]);
+    const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchCourse = async () => {
       try {
         const token = await getAccessTokenSilently();
-        const res = await fetch(`http://localhost:5000/courses/${courseId}`, {
+        const res = await fetch(`${apiUrl}/courses/${courseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch event");
@@ -25,7 +26,7 @@ export default function Course() {
         setEditData(courseData);
 
         // Fetch user's enrolled courses
-        const enrolledRes = await fetch("http://localhost:5000/user-courses?status=enrolled", {
+        const enrolledRes = await fetch(`${apiUrl}/user-courses?status=enrolled`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!enrolledRes.ok) throw new Error("Failed to fetch enrolled courses");
@@ -48,7 +49,7 @@ export default function Course() {
       const getCourses = async () => {
             try {
               const token = await getAccessTokenSilently();
-              const response = await fetch("http://localhost:5000/courses", {
+              const response = await fetch(`${apiUrl}/courses`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               if (!response.ok) {
@@ -73,7 +74,7 @@ export default function Course() {
 
     try {
       const token = await getAccessTokenSilently();
-      const res = await fetch("http://localhost:5000/user-courses", {
+      const res = await fetch(`${apiUrl}/user-courses`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,7 +105,7 @@ export default function Course() {
    const handleUpdate = async () => {
     try {
       const token = await getAccessTokenSilently();
-      const res = await fetch(`http://localhost:5000/courses/${courseId}`, {
+      const res = await fetch(`${apiUrl}/courses/${courseId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

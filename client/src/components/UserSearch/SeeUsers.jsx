@@ -5,11 +5,12 @@ export default function SeeUsers() {
   const [selectedRole, setSelectedRole] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDiscipline, setSelectedDiscipline] = useState("Any");
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const res = await fetch("http://localhost:5000/api/profiles");
+        const res = await fetch(`${apiUrl}/api/profiles`);
         const data = await res.json();
         setUsers(data);
       } catch (err) {

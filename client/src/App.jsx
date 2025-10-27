@@ -20,6 +20,7 @@ function App() {
 
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [profile, setProfile] = useState(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -27,7 +28,7 @@ function App() {
 
       try {
         const token = await getAccessTokenSilently();
-        const response = await fetch(`http://localhost:5000/api/profile`, {
+        const response = await fetch(`${apiUrl}/api/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

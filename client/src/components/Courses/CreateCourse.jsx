@@ -4,6 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 export default function CreateCourse() {
     const [courses, setCourses] = useState([]);
     const { getAccessTokenSilently } = useAuth0();
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     const [formData, setFormData] = useState({
         name: "",
@@ -16,7 +17,7 @@ export default function CreateCourse() {
           const getCourses = async () => {
             try {
               const token = await getAccessTokenSilently();
-              const response = await fetch("http://localhost:5000/courses", {
+              const response = await fetch(`${apiUrl}/courses`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               if (!response.ok) {
@@ -44,7 +45,7 @@ export default function CreateCourse() {
     // Sends event data to BE
      try {
         const token = await getAccessTokenSilently();
-      const res = await fetch("http://localhost:5000/courses", {
+      const res = await fetch(`${apiUrl}/courses`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

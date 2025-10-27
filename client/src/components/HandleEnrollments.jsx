@@ -5,12 +5,13 @@ import { Link } from "react-router-dom";
 export default function HandleEnrollments() {
   const [courses, setCourses] = useState([]);
   const { getAccessTokenSilently } = useAuth0();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchInstructorCourses = async () => {
       try {
         const token = await getAccessTokenSilently();
-        const res = await fetch("http://localhost:5000/instructor-courses", {
+        const res = await fetch(`${apiUrl}/instructor-courses`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch instructor courses");
