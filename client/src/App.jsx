@@ -54,7 +54,7 @@ function App() {
       <Route path="/user-search" element={<SeeUsers />} />
       <Route path="/create-course" element={<CreateCourse />} />
       <Route path="/course-list" element={<CoursesList />} />
-      <Route path="/course/:courseId" element={<Course />} />
+      <Route path="/course/:courseId" element={<Course profile={profile} />} />
       <Route path="/enrolled-courses" element={<EnrolledCourses />} />
       <Route path="/handle-enrollment" element={<HandleEnrollments />} />
       <Route path="/handle-enrollment/:courseId" element={<CourseEnrollments />} />

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useParams } from "react-router-dom";
 
-export default function Course() {
+export default function Course(props) {
     const { courseId } = useParams();
     const { getAccessTokenSilently } = useAuth0();
     const [course, setCourse] = useState(null);
@@ -182,7 +182,7 @@ export default function Course() {
                 <p>Prerequisites: {course.prereqs}</p>
                 <p>Max. Number of Students Allowed: {course.students_allowed}</p>
                 <p>Students Enrolled: {course.enrolled_students}</p>
-            <button onClick={() => setIsEditing(true)}>Edit Course</button>
+            {props.profile?.role === "Instructor" && (<button onClick={() => setIsEditing(true)}>Edit Course</button>)}
             <button onClick={handleApply} disabled={!canApply || course.enrolled_students >= course.students_allowed}>Apply</button>
             </div>
             )}
