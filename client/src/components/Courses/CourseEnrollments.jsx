@@ -11,6 +11,8 @@ export default function CourseEnrollments() {
     const [enrolledStudents, setEnrolledStudents] = useState([]);
     const [selectedStudents, setSelectedStudents] = useState([]);
     const apiUrl = import.meta.env.VITE_API_URL;
+    const [appliedSearch, setAppliedSearch] = useState("");
+    const [enrolledSearch, setEnrolledSearch] = useState("");
 
     useEffect(() => {
     const fetchStudents = async () => {
@@ -70,11 +72,29 @@ const handleEnroll = async () => {
   }
 };
 
+    // Search applied students
+    const filteredApplied = appliedStudents.filter((s) =>
+        s.username.toLowerCase().includes(appliedSearch.toLowerCase())
+    );
+
+    // Search enrolled students
+    const filteredEnrolled = enrolledStudents.filter((s) =>
+        s.username.toLowerCase().includes(enrolledSearch.toLowerCase())
+    );
+
     return (
         <div>
             <h1>{course?.name}</h1>
             <h2>Applied Students</h2>
-            {appliedStudents.length === 0? (
+            <div>
+              <label>Search Students: </label>
+              <input
+                type="text"
+                value={appliedSearch}
+                onChange={(e) => setAppliedSearch(e.target.value)}
+              />
+            </div>
+            {filteredApplied.length === 0? (
                 <p>No students have applied yet</p>
             ) : (
                 <table>
@@ -86,7 +106,7 @@ const handleEnroll = async () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {appliedStudents.map((student) => (
+                        {filteredApplied.map((student) => (
                             <tr key={student.id}>
                                 <td><input type="checkbox" checked={selectedStudents.includes(student.id)} onChange={() => handleCheckboxChange(student.id)} /></td>
                                 <td>{student.username}</td>
@@ -100,7 +120,15 @@ const handleEnroll = async () => {
             <button onClick={handleEnroll}>Enroll Student(s)</button>
             <div>
                 <h2>Enrolled Students</h2>
-                {enrolledStudents.length === 0 ? (
+                <div>
+                  <label>Search Students: </label>
+                  <input
+                    type="text"
+                    value={enrolledSearch}
+                    onChange={(e) => setEnrolledSearch(e.target.value)}
+                  />
+                </div>                
+                {filteredEnrolled.length === 0 ? (
                     <p>No students have been enrolled yet</p>
                 ) : (
                     <table>
@@ -112,7 +140,7 @@ const handleEnroll = async () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {enrolledStudents.map((student) => (
+                        {filteredEnrolled.map((student) => (
                         <tr key={student.id}>
                             <td>
                             <input
