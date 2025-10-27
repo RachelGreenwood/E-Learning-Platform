@@ -13,6 +13,8 @@ createRoot(document.getElementById('root')).render(
       redirect_uri: import.meta.env.VITE_AUTH0_REDIRECT_URI,
       audience: import.meta.env.VITE_AUTH0_AUDIENCE,
     }}
+    useRefreshTokens={true}
+    cacheLocation="localstorage"
   >
     <BrowserRouter>
       <StrictMode>
