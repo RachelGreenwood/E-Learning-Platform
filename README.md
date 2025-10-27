@@ -21,7 +21,7 @@ This is a fullstack PERN (PostgreSQL, Express, React, Node.js) course management
 1. **Clone the repository**  
    ```bash
    git clone https://github.com/RachelGreenwood/E-Learning-Platform.git
-   cd server```
+   cd E-Learning-Platform/server```
 
 
 2. **Install dependencies**
