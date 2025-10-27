@@ -13,6 +13,7 @@ import Course from "./components/Courses/Course.jsx";
 import EnrolledCourses from "./components/Courses/EnrolledCourses.jsx";
 import HandleEnrollments from "./components/HandleEnrollments.jsx";
 import CourseEnrollments from "./components/Courses/CourseEnrollments.jsx";
+import Grades from "./components/Grades/Grades.jsx";
 
 function App() {
 
