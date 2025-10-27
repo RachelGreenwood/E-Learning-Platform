@@ -20,7 +20,9 @@ export default function NavBar({ profile }) {
                         <li><Link className='link' to="/handle-enrollment">Handle Enrollments</Link></li>
                     )}
                     <li><Link className='link' to="/grades">Grades</Link></li>
-                    <li><Link className='link' to="/my-courses">My Courses</Link></li>
+                    {profile?.role === "Instructor" && (
+                        <li><Link className='link' to="/my-courses">My Courses</Link></li>
+                    )}
                 </ul>
             </nav>
         </div>
