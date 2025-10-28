@@ -46,6 +46,27 @@ export default function StudentDetails({ student, enrolledCourses }) {
         return gpa.toFixed(2);
     };
 
+    // Color-codes grades
+    const getGradeColor = (grade) => {
+        if (!grade) return "inherit";
+        if (typeof grade === "number") {
+            if (grade >= 90) return "green";
+            if (grade >= 80) return "goldenrod";
+            if (grade >= 70) return "orange";
+            if (grade >= 60) return "red";
+            return "darkred";
+        }
+        const g = grade.toUpperCase();
+        switch (g) {
+            case "A": return "green";
+            case "B": return "goldenrod";
+            case "C": return "orange";
+            case "D": return "red";
+            case "F": return "darkred";
+            default: return "inherit";
+        }
+    };
+
     const handleSubmitGrade = async (courseId) => {
     const { assignmentName, grade } = gradesInput[courseId] || {};
     if (!assignmentName || !grade) return alert("Fill in both fields");
@@ -117,7 +138,10 @@ export default function StudentDetails({ student, enrolledCourses }) {
                         <ul style={{ marginTop: "0.5rem" }}>
                             {grades[course.course_id].map((g, idx) => (
                             <li key={idx}>
-                                {g.assignment_name}: {g.grade}
+                                {g.assignment_name}: {" "}
+                                <span style={{ color: getGradeColor(g.grade), fontWeight: "bold" }}>
+                                    {g.grade}
+                                </span>
                             </li>
                             ))}
                         </ul>
