@@ -479,19 +479,19 @@ app.delete("/course-students/:courseId", verifyJwt, async (req, res) => {
 
 // POSTs student's grades
 app.post("/grades", verifyJwt, async (req, res) => {
-  const { courseId, studentId, assignmentName, grade } = req.body;
+  const { courseId, auth0_id, assignmentName, grade } = req.body;
 
-  if (!courseId || !studentId || !assignmentName || !grade) {
+  if (!courseId || !auth0_id || !assignmentName || !grade) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
     const query = `
-      INSERT INTO grades (course_id, student_id, assignment_name, grade)
+      INSERT INTO grades (course_id, auth0_id, assignment_name, grade)
       VALUES ($1, $2, $3, $4)
       RETURNING *;
     `;
-    const result = await pool.query(query, [courseId, studentId, assignmentName, grade]);
+    const result = await pool.query(query, [courseId, auth0_id, assignmentName, grade]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error("Error inserting grade:", err);
@@ -500,12 +500,12 @@ app.post("/grades", verifyJwt, async (req, res) => {
 });
 
 // GET grades
-app.get("/grades/:studentId/:courseId", verifyJwt, async (req, res) => {
-  const { studentId, courseId } = req.params;
+app.get("/grades/:auth0_id", verifyJwt, async (req, res) => {
+  const { auth0_id } = req.params;
   try {
     const result = await pool.query(
-      "SELECT * FROM grades WHERE student_id = $1 AND course_id = $2 ORDER BY created_at DESC",
-      [studentId, courseId]
+      "SELECT * FROM grades WHERE auth0_id = $1 ORDER BY course_id, assignment_name",
+      [auth0_id]
     );
     res.json(result.rows);
   } catch (err) {

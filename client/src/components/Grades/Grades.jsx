@@ -32,6 +32,12 @@ export default function Grades(props) {
         fetchCourse();
       }, [selectedStudent, getAccessTokenSilently, apiUrl]);
 
+      useEffect(() => {
+        if (props.profile?.role === "Student") {
+            setSelectedStudent(props.profile);
+        }
+    }, [props.profile]);
+
     useEffect(() => {
         async function fetchUsers() {
           try {
@@ -68,7 +74,7 @@ console.log(students); // do students[i].sub match the DB user_id?
                 ))}
             </select>
             )}
-            <StudentDetails student={selectedStudent} enrolledCourses={enrolledCourses} />
+            <StudentDetails student={selectedStudent} enrolledCourses={enrolledCourses} userRole={props.profile?.role} />
         </div>
     )
 }

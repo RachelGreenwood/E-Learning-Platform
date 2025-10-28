@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useState } from "react";
 
-export default function StudentDetails({ student, enrolledCourses }) {
+export default function StudentDetails({ student, enrolledCourses, userRole }) {
     const [gradesInput, setGradesInput] = useState(
         enrolledCourses.reduce((acc, course) => {
             acc[course.course_id] = { assignmentName: "", grade: "" };
@@ -11,6 +11,32 @@ export default function StudentDetails({ student, enrolledCourses }) {
     const { getAccessTokenSilently } = useAuth0();
     const apiUrl = import.meta.env.VITE_API_URL;
     const [grades, setGrades] = useState({});
+
+    // Gets student's grades
+    useEffect(() => {
+  const fetchExistingGrades = async () => {
+    if (!student) return;
+    try {
+      const token = await getAccessTokenSilently();
+      const res = await fetch(`${apiUrl}/grades/${student.auth0_id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch grades");
+      const data = await res.json();
+
+      const grouped = data.reduce((acc, grade) => {
+        if (!acc[grade.course_id]) acc[grade.course_id] = [];
+        acc[grade.course_id].push(grade);
+        return acc;
+      }, {});
+      setGrades(grouped);
+    } catch (err) {
+      console.error("Error fetching grades:", err);
+    }
+  };
+
+  fetchExistingGrades();
+}, [student, apiUrl, getAccessTokenSilently]);
 
     // Translates numerical grades to points
     const gradeToPoints = (grade) => {
@@ -81,7 +107,7 @@ export default function StudentDetails({ student, enrolledCourses }) {
         },
         body: JSON.stringify({
             courseId,
-            studentId: student.auth0_id,
+            auth0_id: student.auth0_id,
             assignmentName,
             grade,
         }),
@@ -148,7 +174,8 @@ export default function StudentDetails({ student, enrolledCourses }) {
                     )}
                 </div>
 {/* Teacher can assign grades */}
-                <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
+                {userRole === "Instructor" && (
+                    <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
                     <input type="text" placeholder="Assignment" value={gradesInput[course.course_id]?.assignmentName || ""}
                                 onChange={(e) =>
                                     setGradesInput((prev) => ({
@@ -176,6 +203,7 @@ export default function StudentDetails({ student, enrolledCourses }) {
                     />
                     <button onClick={() => handleSubmitGrade(course.course_id)}>Submit Grade</button>
                 </div>
+                )}
                 </div>
             ))}
         </div>
