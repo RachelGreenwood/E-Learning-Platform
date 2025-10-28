@@ -12,6 +12,40 @@ export default function StudentDetails({ student, enrolledCourses }) {
     const apiUrl = import.meta.env.VITE_API_URL;
     const [grades, setGrades] = useState({});
 
+    // Translates numerical grades to points
+    const gradeToPoints = (grade) => {
+        if (typeof grade === "number") {
+            if (grade >= 90) return 4.0;
+            if (grade >= 80) return 3.0;
+            if (grade >= 70) return 2.0;
+            if (grade >= 60) return 1.0;
+            return 0.0;
+        }
+
+        // Translates letter grades to points
+        const g = grade.toUpperCase();
+        switch (g) {
+            case "A": return 4.0;
+            case "B": return 3.0;
+            case "C": return 2.0;
+            case "D": return 1.0;
+            case "F": return 0.0;
+            default: return null;
+        }
+    };
+
+    // Calculates GPA from current grades
+    const calculateGPA = () => {
+        const allGrades = Object.values(grades).flat();
+        const validPoints = allGrades
+            .map(g => gradeToPoints(g.grade))
+            .filter(p => p !== null);
+
+        if (validPoints.length === 0) return "N/A";
+        const gpa = validPoints.reduce((a, b) => a + b, 0) / validPoints.length;
+        return gpa.toFixed(2);
+    };
+
     const handleSubmitGrade = async (courseId) => {
     const { assignmentName, grade } = gradesInput[courseId] || {};
     if (!assignmentName || !grade) return alert("Fill in both fields");
@@ -64,6 +98,7 @@ export default function StudentDetails({ student, enrolledCourses }) {
             <h2>{student.username}</h2>
             <p>Email: {student.email}</p>
             <p>Discipline: {student.discipline}</p>
+            <p>GPA: {calculateGPA()}</p>
             <h3>Enrolled Courses</h3>
 
             {enrolledCourses.map((course) => (
