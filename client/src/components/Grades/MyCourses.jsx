@@ -64,6 +64,7 @@ export default function MyCourses() {
                 ))}
             </select>
             <Course courseId={selectedCourse} />
+            <button onClick={() => handleDelete(selectedCourse)}>Delete</button>
         </div>
     )
 }
