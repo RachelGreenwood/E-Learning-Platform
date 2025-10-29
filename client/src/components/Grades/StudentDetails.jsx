@@ -168,7 +168,7 @@ export default function StudentDetails({ student, enrolledCourses, userRole }) {
                                 <span style={{ color: getGradeColor(g.grade), fontWeight: "bold" }}>
                                     {g.grade}
                                 </span>
-                                {g.assigned_at}
+                                Assigned on: {new Date(g.assigned_at).toLocaleString()}
                             </li>
                             ))}
                         </ul>
