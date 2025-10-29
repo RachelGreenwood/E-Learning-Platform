@@ -168,6 +168,7 @@ export default function StudentDetails({ student, enrolledCourses, userRole }) {
                                 <span style={{ color: getGradeColor(g.grade), fontWeight: "bold" }}>
                                     {g.grade}
                                 </span>
+                                {g.assigned_at}
                             </li>
                             ))}
                         </ul>
