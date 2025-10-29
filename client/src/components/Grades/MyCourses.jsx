@@ -40,6 +40,7 @@ export default function MyCourses() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to delete course");
+      alert("Course deleted successfully!")
 
       setCourses((prev) => prev.filter((course) => course.id !== courseId));
     } catch (err) {
