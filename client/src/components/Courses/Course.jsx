@@ -184,7 +184,7 @@ export default function Course(props) {
                 <p>Max. Number of Students Allowed: {course.students_allowed}</p>
                 <p>Students Enrolled: {course.enrolled_students}</p>
             {props.profile?.role === "Instructor" && (<button onClick={() => setIsEditing(true)}>Edit Course</button>)}
-            <button onClick={handleApply} disabled={!canApply || course.enrolled_students >= course.students_allowed}>Apply</button>
+            {props.profile?.role === "Student" && (<button onClick={handleApply} disabled={!canApply || course.enrolled_students >= course.students_allowed}>Apply</button>)}
             </div>
             )}
         </div>
