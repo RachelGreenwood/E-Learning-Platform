@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
+import Course from "../Courses/Course.jsx";
 
 export default function MyCourses() {
     const [courses, setCourses] = useState([]);
     const { getAccessTokenSilently, user } = useAuth0();
     const apiUrl = import.meta.env.VITE_API_URL;
+    const [selectedCourse, setSelectedCourse] = useState(null);
 
     useEffect(() => {
       const getCourses = async () => {
@@ -48,15 +50,20 @@ export default function MyCourses() {
 
     const instructorsCourses = courses.filter((course) => course.created_by === user.sub)
 
+    const handleSelectChange = (e) => {
+        setSelectedCourse(e.target.value);
+      };
+
     return (
         <div>
             <h1>My Courses</h1>
-            {instructorsCourses.map((course) => (
-                <div>
-                  <Link to={`/course/${course.id}`} key={course.id}>{course.name}</Link>
-                <button onClick={() => handleDelete(course.id)}>Delete</button>
-                </div>
-            ))}
+            <select onChange={handleSelectChange}>
+                  <option value="">Select a Course</option>
+                {instructorsCourses.map((course) => (
+                    <option key={course.id} value={course.id}>{course.name}</option>
+                ))}
+            </select>
+            <Course courseId={selectedCourse} />
         </div>
     )
 }

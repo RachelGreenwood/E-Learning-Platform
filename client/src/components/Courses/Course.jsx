@@ -3,7 +3,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useParams } from "react-router-dom";
 
 export default function Course(props) {
-    const { courseId } = useParams();
+    const { courseId: paramId } = useParams();
+    const courseId = props.courseId || paramId;
     const { getAccessTokenSilently } = useAuth0();
     const [course, setCourse] = useState(null);
     const [completedCourses, setCompletedCourses] = useState([]);
