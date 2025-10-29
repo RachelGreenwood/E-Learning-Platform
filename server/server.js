@@ -398,14 +398,21 @@ app.get("/student-courses", verifyJwt, async (req, res) => {
     const studentId = req.query.user_id;
     if (!studentId) return res.status(400).json({ error: "Missing user_id query param" });
 
-    const result = await pool.query(
-      `SELECT id, course_id, course_name, teacher_name, prerequisites, status
-       FROM user_courses
-       WHERE user_id = $1
-       AND status = 'enrolled'
-       ORDER BY id DESC`,
-      [studentId]
-    );
+    const result = await pool.query(`
+  SELECT uc.id,
+         uc.course_id,
+         uc.course_name,
+         uc.teacher_name,
+         uc.prerequisites,
+         uc.status,
+         c.created_by AS teacher_id
+  FROM user_courses uc
+  JOIN courses c ON uc.course_id = c.id
+  WHERE uc.user_id = $1
+    AND uc.status = 'enrolled'
+  ORDER BY uc.id DESC
+`, [studentId]);
+
 
     res.json(result.rows);
   } catch (err) {

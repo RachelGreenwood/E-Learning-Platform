@@ -22,8 +22,13 @@ export default function Grades(props) {
             });
             if (!enrolledRes.ok) throw new Error("Failed to fetch enrolled courses");
             const enrolledData = await enrolledRes.json();
-            console.log("enrolledData:", enrolledData);
-            setEnrolledCourses(enrolledData);
+
+            // Only show courses that this instructor (current user) owns
+            const instructorCourses = enrolledData.filter(
+              course => course.teacher_id === props.profile.auth0_id
+            );
+            setEnrolledCourses(instructorCourses);
+            console.log("Teacher courses: ", instructorCourses)
           } catch (err) {
             console.error(err);
           }
