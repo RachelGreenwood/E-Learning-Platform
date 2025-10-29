@@ -1,7 +1,7 @@
 # Kyu to Dan
 
 ## Link to Live Site
-[Kyu to Dan](https://kyutodan-frci.onrender.com/)
+[Kyu to Dan](https://kyutodan.onrender.com/)
 
 ## Project Overview
 This is a fullstack PERN (PostgreSQL, Express, React, Node.js) course management application for martial arts students with Auth0 authentication.
