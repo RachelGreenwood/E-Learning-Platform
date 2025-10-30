@@ -298,3 +298,19 @@ This application uses **Auth0** for authentication. Users must log in to access 
      ```
 
 > **Note:** Users cannot access protected routes or pages without logging in via Auth0. Make sure your Auth0 application allows the redirect URI configured in your frontend `.env`.
+
+## Tests
+
+This project includes tests for both frontend and backend functionality using Vitest, React Testing Library, Jest, and Supertest.
+
+### Frontend Test
+- Tests `Profile.jsx`
+- **Purpose:** Ensures that the Profile component correctly displays user information when authenticated.
+- **Test Cases:**
+  1. Shows the `username` and `email` fields when the user is authenticated and the fetch request succeeds.
+  2. Displays an error message if fetching the profile data fails.
+
+### Backend Test
+- **Tests `GET /api/profiles` endpoint
+- **Purpose:** Verifies that the backend returns all user profiles from the database.
+- **Test Case:** Returns an array of user profiles with correct `id`, `username`, and `email` fields, and responds with a `200` status code.
