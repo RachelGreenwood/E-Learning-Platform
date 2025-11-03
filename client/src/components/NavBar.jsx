@@ -12,7 +12,7 @@ export default function NavBar({ profile }) {
                     {profile?.role === "Instructor" && (
                         <li><Link className='link' to="/create-course">Create Course</Link></li>
                     )}
-                    <li><Link className='link' to="/course-list">Course List</Link></li>
+                    {profile && <li><Link className='link' to="/course-list">Course List</Link></li>}
                     {profile?.role === "Student" && (
                         <li><Link className='link' to="/enrolled-courses">Enrolled Courses</Link></li>
                     )}
