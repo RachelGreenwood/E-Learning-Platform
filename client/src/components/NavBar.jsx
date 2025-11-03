@@ -7,7 +7,7 @@ export default function NavBar({ profile }) {
             <nav>
                 <ul>
                     <li><AuthenticationButton /></li>
-                    <li><Link className='link' to="/profile"><div>Profile</div></Link></li>
+                    {profile && <li><Link className='link' to="/profile"><div>Profile</div></Link></li>}
                     <li><Link className='link' to="/user-search">See All Users</Link></li>
                     {profile?.role === "Instructor" && (
                         <li><Link className='link' to="/create-course">Create Course</Link></li>
