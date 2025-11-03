@@ -1,213 +1,68 @@
---
--- PostgreSQL database dump
---
+-- Drop tables if they exist (cascading dependencies)
+DROP TABLE IF EXISTS public.user_courses CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
+DROP TABLE IF EXISTS public.courses CASCADE;
+DROP TABLE IF EXISTS public.users CASCADE;
 
-\restrict NiXabKrZmKu0RfUauskdnVqnldtZwwIUxPXMQlPMQMhnNtFIBlgTDhqDa8Uczam
+-- Drop sequences if they exist
+DROP SEQUENCE IF EXISTS public.courses_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS public.profiles_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS public.user_courses_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS public.users_id_seq CASCADE;
 
--- Dumped from database version 14.19 (Homebrew)
--- Dumped by pg_dump version 14.19 (Homebrew)
+-- Create sequences
+CREATE SEQUENCE public.courses_id_seq START 1;
+CREATE SEQUENCE public.profiles_id_seq START 1;
+CREATE SEQUENCE public.user_courses_id_seq START 1;
+CREATE SEQUENCE public.users_id_seq START 1;
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: courses; Type: TABLE; Schema: public; Owner: rgreenwood
---
-
+-- Create tables
 CREATE TABLE public.courses (
-    id integer NOT NULL,
+    id integer NOT NULL DEFAULT nextval('public.courses_id_seq'),
     name text NOT NULL,
     credits integer NOT NULL,
     prereqs text,
     students_allowed integer NOT NULL,
     created_by text NOT NULL,
-    enrolled_students integer DEFAULT 0
+    enrolled_students integer DEFAULT 0,
+    CONSTRAINT courses_pkey PRIMARY KEY (id)
 );
 
-
-ALTER TABLE public.courses OWNER TO rgreenwood;
-
---
--- Name: courses_id_seq; Type: SEQUENCE; Schema: public; Owner: rgreenwood
---
-
-CREATE SEQUENCE public.courses_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.courses_id_seq OWNER TO rgreenwood;
-
---
--- Name: courses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: rgreenwood
---
-
-ALTER SEQUENCE public.courses_id_seq OWNED BY public.courses.id;
-
-
---
--- Name: profiles; Type: TABLE; Schema: public; Owner: rgreenwood
---
-
 CREATE TABLE public.profiles (
-    id integer NOT NULL,
+    id integer NOT NULL DEFAULT nextval('public.profiles_id_seq'),
     auth0_id character varying(100) NOT NULL,
     email character varying(255) NOT NULL,
     username character varying(50) NOT NULL,
     discipline character varying(100) NOT NULL,
-    role character varying(100) NOT NULL
+    role character varying(100) NOT NULL,
+    CONSTRAINT profiles_pkey PRIMARY KEY (id),
+    CONSTRAINT profiles_auth0_id_key UNIQUE (auth0_id),
+    CONSTRAINT profiles_email_key UNIQUE (email),
+    CONSTRAINT profiles_username_key UNIQUE (username)
 );
 
-
-ALTER TABLE public.profiles OWNER TO rgreenwood;
-
---
--- Name: profiles_id_seq; Type: SEQUENCE; Schema: public; Owner: rgreenwood
---
-
-CREATE SEQUENCE public.profiles_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.profiles_id_seq OWNER TO rgreenwood;
-
---
--- Name: profiles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: rgreenwood
---
-
-ALTER SEQUENCE public.profiles_id_seq OWNED BY public.profiles.id;
-
-
---
--- Name: user_courses; Type: TABLE; Schema: public; Owner: rgreenwood
---
-
 CREATE TABLE public.user_courses (
-    id integer NOT NULL,
+    id integer NOT NULL DEFAULT nextval('public.user_courses_id_seq'),
     user_id text NOT NULL,
     course_id integer NOT NULL,
     course_name text NOT NULL,
     teacher_name text NOT NULL,
     prerequisites text[] DEFAULT '{}'::text[],
-    status text DEFAULT 'applied'::text,
+    status text DEFAULT 'applied'::text CHECK ((status = ANY (ARRAY['applied','enrolled','completed','dropped']))),
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT user_courses_status_check CHECK ((status = ANY (ARRAY['applied'::text, 'enrolled'::text, 'completed'::text, 'dropped'::text])))
+    CONSTRAINT user_courses_pkey PRIMARY KEY (id),
+    CONSTRAINT user_courses_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id) ON DELETE CASCADE
 );
-
-
-ALTER TABLE public.user_courses OWNER TO rgreenwood;
-
---
--- Name: user_courses_id_seq; Type: SEQUENCE; Schema: public; Owner: rgreenwood
---
-
-CREATE SEQUENCE public.user_courses_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.user_courses_id_seq OWNER TO rgreenwood;
-
---
--- Name: user_courses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: rgreenwood
---
-
-ALTER SEQUENCE public.user_courses_id_seq OWNED BY public.user_courses.id;
-
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: rgreenwood
---
 
 CREATE TABLE public.users (
-    id integer NOT NULL,
+    id integer NOT NULL DEFAULT nextval('public.users_id_seq'),
     name character varying(100),
-    email character varying(100)
+    email character varying(100),
+    CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 
-
-ALTER TABLE public.users OWNER TO rgreenwood;
-
---
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: rgreenwood
---
-
-CREATE SEQUENCE public.users_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.users_id_seq OWNER TO rgreenwood;
-
---
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: rgreenwood
---
-
-ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
-
-
---
--- Name: courses id; Type: DEFAULT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.courses ALTER COLUMN id SET DEFAULT nextval('public.courses_id_seq'::regclass);
-
-
---
--- Name: profiles id; Type: DEFAULT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.profiles ALTER COLUMN id SET DEFAULT nextval('public.profiles_id_seq'::regclass);
-
-
---
--- Name: user_courses id; Type: DEFAULT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.user_courses ALTER COLUMN id SET DEFAULT nextval('public.user_courses_id_seq'::regclass);
-
-
---
--- Name: users id; Type: DEFAULT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
-
-
---
--- Data for Name: courses; Type: TABLE DATA; Schema: public; Owner: rgreenwood
---
-
+-- Insert data
 COPY public.courses (id, name, credits, prereqs, students_allowed, created_by, enrolled_students) FROM stdin;
 18	Rachel Greenwood	1		1	auth0|68ffc119fb66734ba492077b	0
 14	Knife Fighting I	10		10	auth0|68fd244ac7940ce6252eba09	3
@@ -218,11 +73,6 @@ COPY public.courses (id, name, credits, prereqs, students_allowed, created_by, e
 17	ngfbdgfs	3		3	auth0|68fd244ac7940ce6252eba09	2
 \.
 
-
---
--- Data for Name: profiles; Type: TABLE DATA; Schema: public; Owner: rgreenwood
---
-
 COPY public.profiles (id, auth0_id, email, username, discipline, role) FROM stdin;
 28	auth0|68f9534d93fbd6f5a89b2565	test99@gmail.com	test99@gmail.com	MMA	Student
 29	auth0|68fd244ac7940ce6252eba09	instructortest@gmail.com	Instructor Test	MMA	Instructor
@@ -231,11 +81,6 @@ COPY public.profiles (id, auth0_id, email, username, discipline, role) FROM stdi
 32	auth0|68ffc119fb66734ba492077b	gfqw@gmail.com	fgd	MMA	Instructor
 33	auth0|68ffab8cfb66734ba491f7e4	rachelgreenwood3301@gmail.com	rgreenwood	MMA	Student
 \.
-
-
---
--- Data for Name: user_courses; Type: TABLE DATA; Schema: public; Owner: rgreenwood
---
 
 COPY public.user_courses (id, user_id, course_id, course_name, teacher_name, prerequisites, status, created_at, updated_at) FROM stdin;
 11	auth0|68f9534d93fbd6f5a89b2565	14	Knife Fighting I	Instructor Test	{}	enrolled	2025-10-26 15:09:39.546349	2025-10-26 15:09:39.546349
@@ -260,111 +105,12 @@ COPY public.user_courses (id, user_id, course_id, course_name, teacher_name, pre
 30	auth0|68fec05fbd9b8a1be3e570cb	17	ngfbdgfs	Instructor Test	{}	enrolled	2025-10-27 16:00:19.778534	2025-10-27 16:00:19.778534
 \.
 
-
---
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: rgreenwood
---
-
 COPY public.users (id, name, email) FROM stdin;
 1	Test Name	test@example.com
 \.
 
-
---
--- Name: courses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: rgreenwood
---
-
+-- Set sequences to next value
 SELECT pg_catalog.setval('public.courses_id_seq', 19, true);
-
-
---
--- Name: profiles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: rgreenwood
---
-
 SELECT pg_catalog.setval('public.profiles_id_seq', 33, true);
-
-
---
--- Name: user_courses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: rgreenwood
---
-
 SELECT pg_catalog.setval('public.user_courses_id_seq', 30, true);
-
-
---
--- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: rgreenwood
---
-
 SELECT pg_catalog.setval('public.users_id_seq', 1, true);
-
-
---
--- Name: courses courses_pkey; Type: CONSTRAINT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.courses
-    ADD CONSTRAINT courses_pkey PRIMARY KEY (id);
-
-
---
--- Name: profiles profiles_auth0_id_key; Type: CONSTRAINT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.profiles
-    ADD CONSTRAINT profiles_auth0_id_key UNIQUE (auth0_id);
-
-
---
--- Name: profiles profiles_email_key; Type: CONSTRAINT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.profiles
-    ADD CONSTRAINT profiles_email_key UNIQUE (email);
-
-
---
--- Name: profiles profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.profiles
-    ADD CONSTRAINT profiles_pkey PRIMARY KEY (id);
-
-
---
--- Name: profiles profiles_username_key; Type: CONSTRAINT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.profiles
-    ADD CONSTRAINT profiles_username_key UNIQUE (username);
-
-
---
--- Name: user_courses user_courses_pkey; Type: CONSTRAINT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.user_courses
-    ADD CONSTRAINT user_courses_pkey PRIMARY KEY (id);
-
-
---
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-
---
--- Name: user_courses user_courses_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rgreenwood
---
-
-ALTER TABLE ONLY public.user_courses
-    ADD CONSTRAINT user_courses_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id) ON DELETE CASCADE;
-
-
---
--- PostgreSQL database dump complete
---
-
-\unrestrict NiXabKrZmKu0RfUauskdnVqnldtZwwIUxPXMQlPMQMhnNtFIBlgTDhqDa8Uczam
-
